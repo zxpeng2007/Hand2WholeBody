@@ -1,4 +1,4 @@
-"""Conditional diffusion for Hand2WholeBody (M4, primary model).
+"""Conditional diffusion for Hand2Body (M4, primary model).
 
 Same-frame lifting like M2, but generative: denoise body[1..L] conditioned on hand[1..L].
 Sampling a body (instead of regressing the mean) is what resolves the single-hand

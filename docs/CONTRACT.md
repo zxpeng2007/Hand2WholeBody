@@ -1,4 +1,4 @@
-# Hand2WholeBody — inter-stage data contract
+# Hand2Body — inter-stage data contract
 
 **Status:** v0.1 (2026-06-29). Items marked 🔒 are confirmed by the user/boss or by
 `assets/urdf/`. Items marked ❓ await upstream. Change this file *first* when any
@@ -8,7 +8,7 @@ convention changes; code reads its constants from `configs/default.yaml`.
 
 ```
  Stage 1                     Stage 2 (THIS REPO)            Stage 3
- table-tennis hand    ──►    Hand2WholeBody         ──►    GMR retarget ──► HoloMotion
+ table-tennis hand    ──►    Hand2Body         ──►    GMR retarget ──► HoloMotion
  generator (upstream)        12D ➜ whole-body SMPL          (human→G1)       (Unitree G1, 50 Hz)
         │                          │                              │
    12D/frame                  SMPL .npz / stream            G1 .npz / live

@@ -1,4 +1,4 @@
-"""Windowed causal dataset for Hand2WholeBody training.
+"""Windowed causal dataset for Hand2Body training.
 
 Given a per-clip pair (hand12 (T,12), body (T,M)), emit training samples that match the
 streaming inference contract (CONTRACT §4/§5):

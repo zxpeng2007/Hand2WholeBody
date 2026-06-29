@@ -1,14 +1,14 @@
-# Stage 3 runbook — Hand2WholeBody SMPL → GMR → HoloMotion (Unitree G1)
+# Stage 3 runbook — Hand2Body SMPL → GMR → HoloMotion (Unitree G1)
 
 How to take a generated SMPL clip all the way to a tracked motion on the Unitree G1, using
 stock **GMR** (`github.com/YanjieZe/GMR`) and **HoloMotion** (`github.com/HorizonRobotics/HoloMotion`).
 Verified against both repos' source (2026-06-29). **GMR/HoloMotion run on Linux/WSL2** (MuJoCo,
-ROS2, IsaacLab); Hand2WholeBody generation/export is platform-independent.
+ROS2, IsaacLab); Hand2Body generation/export is platform-independent.
 
 ## TL;DR pipeline
 
 ```
-Hand2WholeBody  ──►  SMPL-X .npz  ──GMR──►  G1 .pkl  ──gmr_to_holomotion──►  HoloMotion .npz  ──►  track
+Hand2Body  ──►  SMPL-X .npz  ──GMR──►  G1 .pkl  ──gmr_to_holomotion──►  HoloMotion .npz  ──►  track
  (our exporter)      (GMR ingest)          (qpos)       (FK to 30 bodies, 50fps)   (ref_* keys)    (clip/sim/robot)
 ```
 

@@ -1,4 +1,4 @@
-"""Training objective for Hand2WholeBody (weights in configs/default.yaml `loss`).
+"""Training objective for Hand2Body (weights in configs/default.yaml `loss`).
 
 Operates on the model's 135-D motion output (h2wb.representations.body) and the input 12D
 hand signal. Terms:

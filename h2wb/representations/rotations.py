@@ -1,4 +1,4 @@
-"""Rotation conversions for Hand2WholeBody — pure NumPy, batched, dependency-light.
+"""Rotation conversions for Hand2Body — pure NumPy, batched, dependency-light.
 
 Everything here is intentionally written without torch so the representation core
 can be unit-tested in any environment (the model/training code will mirror these

@@ -1,4 +1,4 @@
-"""DiffMLP — AGRoL-style conditional diffusion backbone for Hand2WholeBody.
+"""DiffMLP — AGRoL-style conditional diffusion backbone for Hand2Body.
 
 Reference: Du et al., "Avatars Grow Legs" (AGRoL), CVPR 2023 — a pure-MLP diffusion
 denoiser that is small (~7M params) and fast (5 DDIM steps, ~35 ms / 196 frames), which

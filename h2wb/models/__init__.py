@@ -1,4 +1,4 @@
-"""Models for Hand2WholeBody.
+"""Models for Hand2Body.
 
 Primary:   diffmlp.DiffMLP        (AGRoL-style conditional diffusion backbone)
 Streaming: streaming.StreamingHand2Body  (causal autoregressive rollout wrapper)

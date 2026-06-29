@@ -1,4 +1,4 @@
-"""Held-out evaluation for Hand2WholeBody — interpretable metrics on UNSEEN sequences.
+"""Held-out evaluation for Hand2Body — interpretable metrics on UNSEEN sequences.
 
 Splits clips by sequence (whole sequences held out, so no window leakage), then reports:
   * mpjpe_mm     : mean per-joint position error after FK (mm) — overall body accuracy.

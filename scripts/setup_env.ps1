@@ -1,4 +1,4 @@
-# Hand2WholeBody environment setup (Windows / PowerShell).
+# Hand2Body environment setup (Windows / PowerShell).
 # System Python is 3.14 (no torch wheels). We use a uv-managed Python 3.12 venv.
 # GPU: RTX 5080 Laptop (Blackwell) -> requires the cu128 torch build.
 

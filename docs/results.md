@@ -1,4 +1,4 @@
-# Results — Hand2WholeBody on `train.pkl`
+# Results — Hand2Body on `train.pkl`
 
 Data: `train.pkl` — 7753 BABEL ball-conditioned SMPL
 sequences (~4.14 M frames, 22-joint poses + real 3D joints), world frame = table URDF (z-up).

@@ -1,4 +1,4 @@
-"""Body-motion representation for Hand2WholeBody model I/O — single source of truth.
+"""Body-motion representation for Hand2Body model I/O — single source of truth.
 
 The model predicts, per frame, a 135-D vector:
 

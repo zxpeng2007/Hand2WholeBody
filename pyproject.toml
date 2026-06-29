@@ -1,5 +1,5 @@
 [project]
-name = "hand2wholebody"
+name = "hand2body"
 version = "0.0.1"
 description = "Generate whole-body SMPL motion from a single left-hand 12D signal (table-tennis humanoid pipeline)."
 readme = "README.md"

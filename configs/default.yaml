@@ -1,4 +1,4 @@
-# Hand2WholeBody default config. See docs/CONTRACT.md for the rationale behind every value.
+# Hand2Body default config. See docs/CONTRACT.md for the rationale behind every value.
 
 frame:
   # World frame is pinned by assets/urdf/table.urdf (origin on floor below table center).

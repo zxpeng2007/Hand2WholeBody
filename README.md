@@ -1,9 +1,9 @@
-# Hand2WholeBody
+# Hand2Body
 
 Generate **whole-body SMPL motion** from a **single left-hand 12D signal**, for the
 table-tennis humanoid pipeline:
 
-<p align="center"><img src="docs/img/pipeline.svg" alt="Hand2WholeBody end-to-end pipeline" width="820"></p>
+<p align="center"><img src="docs/img/pipeline.svg" alt="Hand2Body end-to-end pipeline" width="820"></p>
 
 - **Input** (per frame, left wrist = SMPL joint 20): `[pos(3), lin_vel(3), rot6D(6)]`,
   world frame, **global** wrist orientation. Forehand/backhand is encoded by that
@@ -17,11 +17,11 @@ constants come from [`configs/default.yaml`](configs/default.yaml).
 
 ## Model & I/O
 
-<p align="center"><img src="docs/img/model.svg" alt="Hand2WholeBody model and I/O" width="860"></p>
+<p align="center"><img src="docs/img/model.svg" alt="Hand2Body model and I/O" width="860"></p>
 
 ## Training & data flow
 
-<p align="center"><img src="docs/img/training.svg" alt="Hand2WholeBody training and data flow" width="900"></p>
+<p align="center"><img src="docs/img/training.svg" alt="Hand2Body training and data flow" width="900"></p>
 
 ## Quickstart
 
@@ -83,5 +83,5 @@ $env:PYTHONPATH = (Get-Location).Path
 .venv\Scripts\python.exe -m pytest -q
 ```
 
-> Note: GMR / HoloMotion themselves run best under Linux/WSL2. Hand2WholeBody training
+> Note: GMR / HoloMotion themselves run best under Linux/WSL2. Hand2Body training
 > and the SMPL export are platform-independent; the Stage-3 retarget happens downstream.

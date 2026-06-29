@@ -1,4 +1,4 @@
-"""World frame, SMPL skeleton, and the 12D-hand canonicalization for Hand2WholeBody.
+"""World frame, SMPL skeleton, and the 12D-hand canonicalization for Hand2Body.
 
 WORLD FRAME (pinned by assets/urdf/table.urdf — do not redefine elsewhere):
   * origin: on the FLOOR (z = 0), directly below the table center.

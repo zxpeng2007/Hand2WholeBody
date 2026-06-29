@@ -1,5 +1,5 @@
 <svg viewBox="0 82 1000 218" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif">
-  <title>Hand2WholeBody model and I/O</title>
+  <title>Hand2Body model and I/O</title>
   <rect x="0" y="82" width="1000" height="218" rx="14" fill="#ffffff"/>
   <defs>
     <marker id="ah2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse">
