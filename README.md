@@ -27,7 +27,7 @@ constants come from [`configs/default.yaml`](configs/default.yaml).
 | **M2** deterministic regressor baseline | ✅ causal transformer + FK losses + training loop, verified on GPU |
 | **M3** self-record swings → GVHMR fine-tune | ⬜ |
 | **M4** streaming diffusion (primary) | ✅ causal DiT denoiser + DDIM + streaming, verified on GPU; SAGE/distillation = polish |
-| **M5** close the loop: SMPL→GMR→MuJoCo→HoloMotion | ⬜ `h2wb/export/` |
+| **M5** close the loop: SMPL→GMR→MuJoCo→HoloMotion | ◐ GMR-ready SMPL-X export + verified [runbook](docs/stage3_runbook.md); robot run is on user's Linux/G1 |
 | **M6** domain-gap hardening | ⬜ |
 
 6D rotation convention is **confirmed** = Zhou-2019 columns (`frames.PROJECT_R6D`). The
