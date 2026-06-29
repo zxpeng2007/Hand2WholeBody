@@ -29,6 +29,28 @@ def save_pairs_cache(path, clips, labels, rest, names=None):
     return path
 
 
+def clip_wrist_activity(clip) -> float:
+    """Mean wrist speed (m/s) of a clip — the velocity channel of the 12D signal.
+
+    Motion-based proxy for 'striking vs idle/locomotion', used instead of act_cat (which is
+    uniformly 'walk' in train.pkl and so useless for filtering). High = dynamic swing.
+    """
+    h = np.asarray(clip[0])
+    return float(np.linalg.norm(h[:, 3:6], axis=1).mean())
+
+
+def filter_by_activity(clips, top_frac=None, min_speed=None):
+    """Keep clips by wrist activity. top_frac keeps the most-active fraction; min_speed thresholds.
+    Returns (filtered_clips, activities)."""
+    acts = np.array([clip_wrist_activity(c) for c in clips]) if clips else np.zeros(0)
+    keep = np.ones(len(clips), bool)
+    if min_speed is not None:
+        keep &= acts >= min_speed
+    if top_frac is not None and 0 < top_frac < 1 and len(clips):
+        keep &= acts >= np.quantile(acts, 1.0 - top_frac)
+    return [c for c, k in zip(clips, keep) if k], acts
+
+
 def load_pairs_cache(path, keep_labels=None, drop_labels=None, mmap=True):
     """Return (clips, rest). Optionally keep/drop sequences whose act_cat set matches."""
     d = np.load(path, allow_pickle=True, mmap_mode=("r" if mmap else None))

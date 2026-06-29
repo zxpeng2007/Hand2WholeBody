@@ -34,6 +34,8 @@ def main():
     ap.add_argument("--cache", default="", help="fast pairs cache from scripts/cache_pairs.py")
     ap.add_argument("--keep-labels", default="", help="comma act_cat to KEEP (else all)")
     ap.add_argument("--drop-labels", default="", help="comma act_cat to DROP")
+    ap.add_argument("--top-activity-frac", type=float, default=0.0,
+                    help="keep only the most wrist-active fraction (0=off); proxy for striking motions")
     ap.add_argument("--pkl", default="", help="coworker train.pkl (SMPL) — FK-extracts the 12D")
     ap.add_argument("--pairs", default="", help="dir of pre-extracted pair_*.npz")
     ap.add_argument("--synthetic", action="store_true")
@@ -79,6 +81,13 @@ def main():
     device = args.device if torch.cuda.is_available() else "cpu"
     w = {k: weights[k] for k in
          ("trans", "rot6d", "velocity", "fk_joint", "hand_consistency") if k in weights} or None
+
+    if args.top_activity_frac > 0:
+        from h2wb.data.cache import filter_by_activity
+        n0 = len(clips)
+        clips, acts = filter_by_activity(clips, top_frac=args.top_activity_frac)
+        print(f"activity filter: kept {len(clips)}/{n0} most-active clips "
+              f"(wrist speed >= {float(np.quantile(acts, 1 - args.top_activity_frac)):.2f} m/s)")
 
     if args.val_frac > 0 and len(clips) > 1:
         train_clips, val_clips = split_clips(clips, val_frac=args.val_frac)

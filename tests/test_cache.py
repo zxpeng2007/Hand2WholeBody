@@ -39,6 +39,16 @@ def test_label_drop_filter(tmp_path):
     assert kept[0][0].shape[0] == 15
 
 
+def test_filter_by_activity_keeps_most_active():
+    from h2wb.data.cache import filter_by_activity, clip_wrist_activity
+    quiet = (np.zeros((20, 12), np.float32), np.zeros((20, 135), np.float32))
+    active = (np.zeros((20, 12), np.float32), np.zeros((20, 135), np.float32))
+    active[0][:, 3:6] = 3.0                       # large wrist velocity channel
+    assert clip_wrist_activity(active) > clip_wrist_activity(quiet)
+    kept, acts = filter_by_activity([quiet, active, quiet], top_frac=0.34)
+    assert len(kept) == 1 and clip_wrist_activity(kept[0]) == clip_wrist_activity(active)
+
+
 def test_no_rest_roundtrips_to_none(tmp_path):
     path = save_pairs_cache(str(tmp_path / "c.npz"), _clips(), ["a", "a", "a"], None)
     _, rest = load_pairs_cache(path)
