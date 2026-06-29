@@ -10,22 +10,20 @@
   <text x="24" y="40" font-size="21" font-weight="700" fill="#0f172a">Training &amp; data flow</text>
   <text x="24" y="63" font-size="13.5" fill="#64748b">From the coworker's SMPL data to a trained, evaluated, visualized model.</text>
 
-  <!-- train.pkl cylinder -->
-  <path d="M24,108 L24,156 A70,8 0 0 0 164,156 L164,108 Z" fill="#fff7ed" stroke="#fb923c" stroke-width="1.6"/>
-  <ellipse cx="94" cy="108" rx="70" ry="8" fill="#fff7ed" stroke="#fb923c" stroke-width="1.6"/>
-  <text x="94" y="132" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0f172a">train.pkl</text>
-  <text x="94" y="149" text-anchor="middle" font-size="10" fill="#64748b">7753 seqs · 4.1M frames</text>
+  <!-- train.pkl (data) -->
+  <rect x="24" y="100" width="140" height="64" rx="11" fill="#fff7ed" stroke="#fb923c" stroke-width="1.6"/>
+  <text x="94" y="128" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0f172a">train.pkl</text>
+  <text x="94" y="146" text-anchor="middle" font-size="10" fill="#64748b">7753 seqs · 4.1M frames</text>
 
   <!-- FK extract -->
   <rect x="196" y="100" width="120" height="64" rx="11" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.6"/>
   <text x="256" y="128" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0f172a">FK extract</text>
   <text x="256" y="146" text-anchor="middle" font-size="10" fill="#64748b">12D + body · calib rest</text>
 
-  <!-- cache cylinder -->
-  <path d="M348,108 L348,156 A60,8 0 0 0 468,156 L468,108 Z" fill="#fff7ed" stroke="#fb923c" stroke-width="1.6"/>
-  <ellipse cx="408" cy="108" rx="60" ry="8" fill="#fff7ed" stroke="#fb923c" stroke-width="1.6"/>
-  <text x="408" y="132" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0f172a">pairs cache</text>
-  <text x="408" y="149" text-anchor="middle" font-size="10" fill="#64748b">2.3 GB · mmap</text>
+  <!-- pairs cache (data) -->
+  <rect x="348" y="100" width="120" height="64" rx="11" fill="#fff7ed" stroke="#fb923c" stroke-width="1.6"/>
+  <text x="408" y="128" text-anchor="middle" font-size="13.5" font-weight="600" fill="#0f172a">pairs cache</text>
+  <text x="408" y="146" text-anchor="middle" font-size="10" fill="#64748b">2.3 GB · mmap</text>
 
   <!-- dataset -->
   <rect x="500" y="100" width="120" height="64" rx="11" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.6"/>
