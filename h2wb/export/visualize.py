@@ -29,6 +29,34 @@ def _draw_table(ax):
     ax.plot([0, 0], [-hy, hy], [z, z], color="tab:gray", lw=1.0, alpha=0.6)  # net line at x=0
 
 
+def plot_positions_montage(positions: np.ndarray, out_path: str, n_frames: int = 6,
+                           title: str = "", paddle_joint: int = F.LEFT_WRIST):
+    """Montage from precomputed joint positions (T, J, 3) — J may be 22 or 24."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    positions = np.asarray(positions)
+    T, J = positions.shape[0], positions.shape[1]
+    idx = np.linspace(0, T - 1, min(n_frames, T)).round().astype(int)
+    edges = [(j, int(F.SMPL_PARENTS[j])) for j in range(1, J)]
+    cols = min(3, len(idx)); rows = int(np.ceil(len(idx) / cols))
+    fig = plt.figure(figsize=(4 * cols, 4 * rows))
+    for k, t in enumerate(idx):
+        ax = fig.add_subplot(rows, cols, k + 1, projection="3d")
+        p = positions[t]
+        for a, b in edges:
+            ax.plot([p[a, 0], p[b, 0]], [p[a, 1], p[b, 1]], [p[a, 2], p[b, 2]], color="tab:blue", lw=2)
+        ax.scatter(p[paddle_joint, 0], p[paddle_joint, 1], p[paddle_joint, 2], color="tab:red", s=30)
+        _draw_table(ax)
+        ax.set_title(f"frame {t}")
+        ax.set_xlim(-2.6, 0.6); ax.set_ylim(-1.6, 1.6); ax.set_zlim(0, 2.0)
+        ax.set_box_aspect((1, 1, 0.62)); ax.view_init(elev=15, azim=-70)
+    if title:
+        fig.suptitle(title)
+    fig.tight_layout(); fig.savefig(out_path, dpi=90); plt.close(fig)
+    return out_path
+
+
 def plot_skeleton_montage(motion: np.ndarray, out_path: str, n_frames: int = 6, title: str = ""):
     """Save a PNG montage of n_frames evenly sampled across the sequence. Returns out_path."""
     import matplotlib
