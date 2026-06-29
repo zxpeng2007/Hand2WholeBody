@@ -1,6 +1,6 @@
 """Round-trip and convention tests for h2wb.representations.rotations.
 
-These pin the rotation contract. If the coworker's upstream 6D basis differs, a
+These pin the rotation contract. If the upstream 6D basis differs, a
 failure here is the first place it surfaces.
 """
 

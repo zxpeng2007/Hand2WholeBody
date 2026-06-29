@@ -1,4 +1,4 @@
-"""Loader for the coworker's whole-body SMPL data (train.pkl) -> training pairs.
+"""Loader for the upstream whole-body SMPL data (train.pkl) -> training pairs.
 
 REAL format (verified on train.pkl, 2026-06-29): a JOBLIB pickle of a **list of sequence
 dicts**. Each item: {motion, data_source, seq_name, feat_p, frame_labels}. The `motion` dict:

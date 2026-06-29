@@ -1,4 +1,4 @@
-"""Inspect an arbitrary .pkl (e.g. the coworker's train.pkl of SMPL data) and print its
+"""Inspect an arbitrary .pkl (e.g. the upstream train.pkl of SMPL data) and print its
 structure: types, dict keys, array shapes/dtypes, lengths, and small value samples.
 
     python scripts/inspect_pkl.py path/to/train.pkl

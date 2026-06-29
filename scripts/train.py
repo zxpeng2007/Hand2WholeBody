@@ -36,7 +36,7 @@ def main():
     ap.add_argument("--drop-labels", default="", help="comma act_cat to DROP")
     ap.add_argument("--top-activity-frac", type=float, default=0.0,
                     help="keep only the most wrist-active fraction (0=off); proxy for striking motions")
-    ap.add_argument("--pkl", default="", help="coworker train.pkl (SMPL) — FK-extracts the 12D")
+    ap.add_argument("--pkl", default="", help="upstream train.pkl (SMPL) — FK-extracts the 12D")
     ap.add_argument("--pairs", default="", help="dir of pre-extracted pair_*.npz")
     ap.add_argument("--synthetic", action="store_true")
     ap.add_argument("--steps", type=int, default=2000)

@@ -1,10 +1,10 @@
-"""aitviewer-based visualization of SMPL motion (the real renderer; matches the coworker's
+"""aitviewer-based visualization of SMPL motion (the real renderer; matches the upstream
 vis_smpl22_aitviewer.py conventions: SMPLLayer/SMPLSequence, z-up, table/net/ball at 0.76 m).
 
 Visualizes:
   * our generated AMASS-style .npz   (visualize_npz)
   * our 135-D motion array            (visualize_motion)
-  * the coworker's train.pkl sequence (visualize_pkl)  -> handy to eyeball the raw data.
+  * the upstream train.pkl sequence (visualize_pkl)  -> handy to eyeball the raw data.
 
 Requires aitviewer + SMPL model files configured in aitviewer's config (licensed; not in the
 repo) and a display/GL context — runs on a workstation, not headless CI. Imports are lazy so
@@ -25,7 +25,7 @@ from ..representations import frames as F
 
 
 # --------------------------------------------------------------------------- #
-# scene meshes (z-up), ported from the coworker's viewer
+# scene meshes (z-up), ported from the upstream viewer
 # --------------------------------------------------------------------------- #
 def _table_mesh(height=F.TABLE_TOP_Z, length=F.TABLE_LENGTH_X, width=F.TABLE_WIDTH_Y, thick=0.016):
     import trimesh
@@ -109,7 +109,7 @@ def visualize_motion(motion, **kw):
 
 
 def visualize_pkl(path, seq_idx=0, **kw):
-    """Visualize one sequence from the coworker's train.pkl (poses (T,66), trans)."""
+    """Visualize one sequence from the upstream train.pkl (poses (T,66), trans)."""
     from ..data.pkl_loader import load_smpl_pkl, iter_sequences
     seqs = list(iter_sequences(load_smpl_pkl(path)))
     seq = seqs[seq_idx]
@@ -118,7 +118,7 @@ def visualize_pkl(path, seq_idx=0, **kw):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--input", required=True, help=".npz (our export) or .pkl (coworker data)")
+    ap.add_argument("--input", required=True, help=".npz (our export) or .pkl (upstream data)")
     ap.add_argument("--seq_idx", type=int, default=0, help="sequence index for .pkl input")
     ap.add_argument("--gender", default="neutral", choices=["neutral", "male", "female"])
     ap.add_argument("--model_type", default="smpl", choices=["smpl", "smplx"])

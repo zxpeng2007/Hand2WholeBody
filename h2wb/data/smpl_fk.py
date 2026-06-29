@@ -2,7 +2,7 @@
 
 This is the M1 milestone: with no paired (12D ↔ SMPL) table-tennis data in existence,
 we BUILD the input signal by forward kinematics from whole-body mocap (AMASS, or the
-coworker's GVHMR-reconstructed table-tennis SMPL).
+upstream GVHMR-reconstructed table-tennis SMPL).
 
 Two layers, deliberately decoupled so the rotation math is testable WITHOUT smplx:
 
@@ -119,7 +119,7 @@ def smplx_joints_fn_factory(model_dir: str, gender: str = "neutral", num_betas: 
     """Return a `joints_fn` backed by the real SMPL model (requires smplx + torch).
 
     Imports are lazy so importing this module never requires smplx. Wire `model_dir`
-    to the coworker's SMPL build once shipped (CONTRACT §6.4).
+    to the upstream SMPL build once shipped (CONTRACT §6.4).
     """
     def _fn(poses: np.ndarray, trans: np.ndarray, betas: np.ndarray) -> np.ndarray:
         import torch  # noqa: WPS433 (lazy)

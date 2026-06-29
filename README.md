@@ -12,7 +12,7 @@ table-tennis humanoid pipeline:
 - **Causal / streaming** (real-time on the robot).
 
 👉 **Read [`docs/CONTRACT.md`](docs/CONTRACT.md) first** — it pins the world frame, the 12D
-semantics, the SMPL output format, and the open questions for the coworker. All code
+semantics, the SMPL output format, and the open upstream questions. All code
 constants come from [`configs/default.yaml`](configs/default.yaml).
 
 ## Model & I/O

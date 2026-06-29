@@ -1,7 +1,7 @@
 # Hand2WholeBody — inter-stage data contract
 
 **Status:** v0.1 (2026-06-29). Items marked 🔒 are confirmed by the user/boss or by
-`assets/urdf/`. Items marked ❓ await the coworker. Change this file *first* when any
+`assets/urdf/`. Items marked ❓ await upstream. Change this file *first* when any
 convention changes; code reads its constants from `configs/default.yaml`.
 
 ## 0. The three stages
@@ -9,7 +9,7 @@ convention changes; code reads its constants from `configs/default.yaml`.
 ```
  Stage 1                     Stage 2 (THIS REPO)            Stage 3
  table-tennis hand    ──►    Hand2WholeBody         ──►    GMR retarget ──► HoloMotion
- generator (coworker)        12D ➜ whole-body SMPL          (human→G1)       (Unitree G1, 50 Hz)
+ generator (upstream)        12D ➜ whole-body SMPL          (human→G1)       (Unitree G1, 50 Hz)
         │                          │                              │
    12D/frame                  SMPL .npz / stream            G1 .npz / live
 ```
@@ -93,13 +93,13 @@ commands + key schemas + G1 29-DoF order in [stage3_runbook.md](stage3_runbook.m
 - **Orientation:** keep in the **world frame** (do **not** remove yaw) — see §2.
 - The removed anchor is stored and re-applied to map predictions back to world.
 
-## 6. Open items for the coworker
+## 6. Open items (upstream)
 
 1. ✅ **RESOLVED 2026-06-29** — 6D basis = Zhou-2019 **columns** (`R6D_COLUMN`).
 2. ✅ **RESOLVED 2026-06-29** — 6D encodes the **wrist joint** (SMPL `left_wrist`), no offset.
 3. ❓ Any extra anchor available besides the single hand (root/origin, or a strike-phase
    backswing/strike/recovery signal) — would sharply cut single-hand ambiguity.
-4. The SMPL build being updated by the coworker — which package/version, num_betas, and
+4. The SMPL build being updated upstream — which package/version, num_betas, and
    whether it returns global joint orientations or only joint positions (we compute global
    orientations by walking `SMPL_PARENTS` either way).
 5. Amount of paired (12D ↔ SMPL) table-tennis data available, if any.

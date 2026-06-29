@@ -6,7 +6,7 @@ frame:
   control_fps: 50              # HoloMotion control loop; interpolate 30->50 only at handoff
 
 representation:
-  rot6d_convention: zhou_column     # CONFIRMED 2026-06-29: coworker emits Zhou-2019 columns.
+  rot6d_convention: zhou_column     # CONFIRMED 2026-06-29: upstream emits Zhou-2019 columns.
   # one of: pytorch3d_row | zhou_column. Single source of truth is frames.PROJECT_R6D.
   paddle_hand_joint: 20        # SMPL left_wrist
   num_body_joints: 22          # SMPL joints 0..21 (drop rigid hand joints 22/23)
@@ -47,7 +47,7 @@ loss:                          # keys match h2wb.losses.compute_losses
 
 data:
   amass_root: ""               # set to local AMASS dir once available
-  smpl_model_dir: ""           # set to the coworker's SMPL model dir once shipped
+  smpl_model_dir: ""           # set to the upstream SMPL model dir once shipped
   target_fps: 30
 
 train:

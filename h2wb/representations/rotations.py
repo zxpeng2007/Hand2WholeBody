@@ -10,7 +10,7 @@ ecosystems that each pick a different one:
     so values are interchangeable once torch is in the stack.
   * AI4Animation (the upstream ai4animationpy generator) stores orientation as a
     forward/up pair AxisZ,AxisY decoded via Rotation.Look(z, y). See `look_to_matrix`
-    / `matrix_to_look`. The coworker's 12D wrist 6D MAY use this basis — keep an
+    / `matrix_to_look`. The upstream 12D wrist 6D MAY use this basis — keep an
     adapter, do not assume.
   * GMR / HoloMotion consume quaternions in (w, x, y, z) order. See
     `matrix_to_quaternion` / `quaternion_to_matrix`.
@@ -19,7 +19,7 @@ All functions accept arbitrary leading batch dims; the rotation lives in the las
 1-2 axes. Inputs are coerced to float64 for numerical stability.
 
 THE 6D CONVENTION IS A CONTRACT, NOT A DETAIL. If a round-trip test ever fails after
-the coworker pins their convention, fix it HERE and nowhere else.
+the upstream pins their convention, fix it HERE and nowhere else.
 """
 
 from __future__ import annotations
@@ -171,7 +171,7 @@ def look_to_matrix(forward: np.ndarray, up: np.ndarray) -> np.ndarray:
 
     Builds R whose columns are (right, up, forward) for a left-handed-ish look
     basis: z'=normalize(forward), x'=normalize(cross(up, z')), y'=cross(z', x').
-    This is the ADAPTER for the coworker's stored 6D if it turns out to be the
+    This is the ADAPTER for the upstream stored 6D if it turns out to be the
     AxisZ/AxisY pair rather than Gram-Schmidt r6d. Verify empirically before use.
     """
     z = normalize(forward)

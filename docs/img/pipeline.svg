@@ -1,14 +1,11 @@
-<svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif">
+<svg viewBox="0 60 1000 228" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,-apple-system,'Segoe UI',Roboto,sans-serif">
   <title>Hand2WholeBody end-to-end pipeline</title>
-  <rect x="0" y="0" width="1000" height="300" rx="14" fill="#ffffff"/>
+  <rect x="0" y="60" width="1000" height="228" rx="14" fill="#ffffff"/>
   <defs>
     <marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
     </marker>
   </defs>
-
-  <text x="40" y="42" font-size="21" font-weight="700" fill="#0f172a">Hand2WholeBody — end-to-end pipeline</text>
-  <text x="40" y="66" font-size="13.5" fill="#64748b">A single left-hand 12D signal drives a whole-body humanoid.</text>
 
   <!-- Stage 1: upstream -->
   <rect x="40" y="120" width="156" height="68" rx="11" fill="#fff7ed" stroke="#fb923c" stroke-width="1.6"/>
@@ -46,7 +43,7 @@
 
   <!-- legend -->
   <rect x="40" y="232" width="13" height="13" rx="3" fill="#fff7ed" stroke="#fb923c" stroke-width="1.4"/>
-  <text x="60" y="243" font-size="12" fill="#475569">Upstream (coworker)</text>
+  <text x="60" y="243" font-size="12" fill="#475569">Upstream generator</text>
   <rect x="232" y="232" width="13" height="13" rx="3" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
   <text x="252" y="243" font-size="12" fill="#475569">Hand2WholeBody (this repo)</text>
   <rect x="470" y="232" width="13" height="13" rx="3" fill="#ecfdf5" stroke="#10b981" stroke-width="1.4"/>
