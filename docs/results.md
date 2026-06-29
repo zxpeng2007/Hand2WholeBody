@@ -1,6 +1,6 @@
 # Results — Hand2WholeBody on `train.pkl`
 
-First real-data training (2026-06-30). Data: `train.pkl` — 7753 BABEL ball-conditioned SMPL
+Data: `train.pkl` — 7753 BABEL ball-conditioned SMPL
 sequences (~4.14 M frames, 22-joint poses + real 3D joints), world frame = table URDF (z-up).
 The left-wrist 12D is FK-derived; the FK rest skeleton is calibrated from the real `joints`.
 

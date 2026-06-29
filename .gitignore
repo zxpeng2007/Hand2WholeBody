@@ -19,6 +19,9 @@ __pycache__/
 /models/smpl/
 *.pkl
 
+# local-only progress tracking (keep status out of the public repo)
+/STATUS.md
+
 # os / editor
 .DS_Store
 .vscode/
