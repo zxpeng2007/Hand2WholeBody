@@ -21,6 +21,7 @@ import os
 import numpy as np
 
 from h2wb.data import smpl_fk as FK
+from h2wb.representations import body as BODY
 from h2wb.representations import frames as F
 from h2wb.representations import rotations as R
 
@@ -38,14 +39,8 @@ def resample(arr: np.ndarray, src_fps: float, dst_fps: float) -> np.ndarray:
 
 
 def smpl_body_vector(poses72: np.ndarray, trans: np.ndarray) -> np.ndarray:
-    """Pack the body target: [root_trans(3) | root_orient_6d(6) | 22 body-joint rot6D(132)] = 141."""
-    T = poses72.shape[0]
-    conv = F.PROJECT_R6D
-    root_R = R.axis_angle_to_matrix(poses72[:, 0:3])
-    root6d = R.matrix_to_rotation_6d(root_R, convention=conv)
-    body_aa = poses72[:, 3:3 + 22 * 3].reshape(T, 22, 3)   # first 22 body joints
-    body6d = R.matrix_to_rotation_6d(R.axis_angle_to_matrix(body_aa), convention=conv).reshape(T, 22 * 6)
-    return np.concatenate([trans, root6d, body6d], axis=-1)
+    """Pack the 135-D body target via the shared representation (h2wb.representations.body)."""
+    return BODY.smpl72_to_motion(poses72, trans)
 
 
 def main():

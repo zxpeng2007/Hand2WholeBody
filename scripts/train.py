@@ -1,9 +1,10 @@
-"""Training entrypoint (M2/M4). Stub: wires config -> dataset -> model -> loop.
+"""Train the M2 regressor.
 
-    python scripts/train.py --config configs/default.yaml --pairs data/pairs
+    # smoke-test the whole loop on synthetic self-consistent data (no real data needed):
+    python scripts/train.py --synthetic --steps 300
 
-The training loop body is implemented once torch is in the venv and paired data exists.
-Kept minimal here so the CLI/plumbing is reviewable now.
+    # train on extracted pairs (scripts/extract_amass.py output):
+    python scripts/train.py --pairs data/pairs --config configs/default.yaml --steps 20000
 """
 
 from __future__ import annotations
@@ -14,6 +15,8 @@ import os
 
 import numpy as np
 import yaml
+
+from h2wb.training import train, synthetic_clips, default_loss_weights
 
 
 def load_pairs(pairs_dir: str):
@@ -27,17 +30,35 @@ def load_pairs(pairs_dir: str):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default="configs/default.yaml")
-    ap.add_argument("--pairs", required=True)
+    ap.add_argument("--pairs", default="")
+    ap.add_argument("--synthetic", action="store_true")
+    ap.add_argument("--steps", type=int, default=2000)
+    ap.add_argument("--length", type=int, default=40)
+    ap.add_argument("--device", default="cuda")
+    ap.add_argument("--out", default="checkpoints/regressor.pt")
     args = ap.parse_args()
-    cfg = yaml.safe_load(open(args.config))
-    clips = load_pairs(args.pairs)
-    print(f"loaded {len(clips)} clips; arch={cfg['model']['arch']}")
 
-    # TODO(M2/M4):
-    #   from h2wb.data.dataset import Hand2BodyDataset
-    #   from h2wb.models.diffmlp import DiffMLP   (or models.regressor for M2)
-    #   build dataset with cfg['window'], train with h2wb.losses.* and cfg['loss'] weights.
-    raise SystemExit("training loop not yet wired — see TODO(M2/M4) in scripts/train.py")
+    cfg = yaml.safe_load(open(args.config))
+    weights = cfg.get("loss", default_loss_weights())
+
+    if args.synthetic or not args.pairs:
+        print("using synthetic self-consistent clips")
+        clips = synthetic_clips(n_clips=16, T=96)
+    else:
+        clips = load_pairs(args.pairs)
+        print(f"loaded {len(clips)} clips from {args.pairs}")
+
+    import torch
+    device = args.device if torch.cuda.is_available() else "cpu"
+    model, history = train(clips, length=args.length, steps=args.steps, device=device,
+                           weights={k: weights[k] for k in
+                                    ("trans", "rot6d", "velocity", "fk_joint", "hand_consistency")
+                                    if k in weights} or None)
+    for h in history:
+        print(h)
+    os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
+    torch.save(model.state_dict(), args.out)
+    print(f"saved {args.out}")
 
 
 if __name__ == "__main__":

@@ -42,9 +42,65 @@ def make_causal_windows(hand12: np.ndarray, body: np.ndarray, k_hand: int, k_bod
     return np.stack(ch), np.stack(cb), np.stack(tg)
 
 
+def make_sequence_windows(hand12: np.ndarray, body: np.ndarray, length: int, stride: int = 1):
+    """Same-frame windows for the lifting task: hand[t..t+L] -> body[t..t+L].
+
+    Returns (hand_w (N, L, 12), body_w (N, L, M)). This is the M2 regressor's view:
+    the body at frame t is produced from the hand up to t (causal), NOT forecast.
+    """
+    hand12 = np.asarray(hand12, np.float32)
+    body = np.asarray(body, np.float32)
+    T = hand12.shape[0]
+    assert body.shape[0] == T
+    if T < length:
+        return (np.empty((0, length, hand12.shape[1]), np.float32),
+                np.empty((0, length, body.shape[1]), np.float32))
+    hw, bw = [], []
+    for t in range(0, T - length + 1, stride):
+        hw.append(hand12[t:t + length])
+        bw.append(body[t:t + length])
+    return np.stack(hw), np.stack(bw)
+
+
+def canonicalize_window(hand_w: np.ndarray, body_w: np.ndarray):
+    """Subtract the window-start pelvis from BOTH hand position and body root translation.
+
+    Orientation channels are untouched (CONTRACT §5: position is canonicalized, the global
+    wrist orientation is preserved). hand_w (..., L, 12), body_w (..., L, 135). Returns
+    (hand_c, body_c, anchor (...,3))."""
+    from ..representations import frames as F
+    from ..representations import body as Bd
+    hand_w = np.asarray(hand_w, np.float32).copy()
+    body_w = np.asarray(body_w, np.float32).copy()
+    anchor = body_w[..., 0:1, Bd.B_TRANS].copy()              # (..., 1, 3) pelvis at t0
+    hand_w[..., F.HAND12_POS] -= anchor
+    body_w[..., Bd.B_TRANS] -= anchor
+    return hand_w, body_w, anchor[..., 0, :]
+
+
 try:
     import torch
     from torch.utils.data import Dataset
+
+    class SequenceDataset(Dataset):
+        """Same-frame windows for the M2 regressor. clips = list of (hand12, body) arrays."""
+
+        def __init__(self, clips, length: int, stride: int = 1, canonicalize: bool = True):
+            hs, bs = [], []
+            for hand12, body in clips:
+                hw, bw = make_sequence_windows(hand12, body, length, stride)
+                if len(hw):
+                    if canonicalize:
+                        hw, bw, _ = canonicalize_window(hw, bw)
+                    hs.append(hw); bs.append(bw)
+            self.hand = np.concatenate(hs) if hs else np.empty((0, length, 12), np.float32)
+            self.body = np.concatenate(bs) if bs else np.empty((0, length, 135), np.float32)
+
+        def __len__(self):
+            return len(self.hand)
+
+        def __getitem__(self, i):
+            return torch.from_numpy(self.hand[i]), torch.from_numpy(self.body[i])
 
     class Hand2BodyDataset(Dataset):
         """Concatenate windows from many clips. Pass lists of (hand12, body) numpy arrays."""

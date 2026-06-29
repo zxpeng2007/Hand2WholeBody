@@ -15,7 +15,7 @@ from h2wb.data.dataset import Hand2BodyDataset
 
 
 def test_diffmlp_forward_shapes():
-    B, K, Kb, P, M = 4, 20, 5, 8, 141
+    B, K, Kb, P, M = 4, 20, 5, 8, 135
     model = DiffMLP(motion_dim=M, k_hand=K, k_body=Kb, p_predict=P,
                     hidden=128, n_blocks=4, latent=128)
     x_t = torch.randn(B, P, M)
@@ -28,7 +28,7 @@ def test_diffmlp_forward_shapes():
 
 
 def test_diffmlp_backward_runs():
-    B, K, Kb, P, M = 2, 10, 3, 4, 141
+    B, K, Kb, P, M = 2, 10, 3, 4, 135
     model = DiffMLP(motion_dim=M, k_hand=K, k_body=Kb, p_predict=P,
                     hidden=64, n_blocks=2, latent=64)
     out = model(torch.randn(B, P, M), torch.randint(0, 1000, (B,)),
@@ -40,7 +40,7 @@ def test_diffmlp_backward_runs():
 
 
 def test_torch_dataset_window_shapes():
-    T, M = 60, 141
+    T, M = 60, 135
     hand = np.random.randn(T, 12).astype(np.float32)
     body = np.random.randn(T, M).astype(np.float32)
     ds = Hand2BodyDataset([(hand, body)], k_hand=20, k_body=5, p_predict=8)

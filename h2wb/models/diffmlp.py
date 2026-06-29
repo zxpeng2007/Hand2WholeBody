@@ -5,9 +5,8 @@ denoiser that is small (~7M params) and fast (5 DDIM steps, ~35 ms / 196 frames)
 is what makes real-time sparse→full-body feasible. Here it denoises the next `P` body
 frames conditioned on a window of past hand (12D) + past body frames.
 
-Body-motion channel layout per frame (see configs/default.yaml `model`):
-    [ 22 body-joint rot6D (132) | root_orient_6D (6) | root_trans (3) ]  = 141 dims
-(root is decomposed out per CONTRACT §5 — predicted separately from local pose.)
+Body-motion channel layout per frame = h2wb.representations.body (135 dims):
+    [ root_trans (3) | 22 joints x 6D (132) ]   (joint 0's 6D is the global pelvis orient)
 
 This file is a faithful, shape-correct implementation ready to train once torch is in
 the venv. It is intentionally self-contained (no external diffusion lib) so the math is
@@ -104,7 +103,7 @@ if _HAS_TORCH:
 
         def __init__(
             self,
-            motion_dim: int = 141,     # 132 + 6 + 3 (see module docstring)
+            motion_dim: int = 135,     # root_trans(3) + 22 joints x 6D(132); h2wb.representations.body
             hand_dim: int = 12,
             k_hand: int = 20,
             k_body: int = 5,
