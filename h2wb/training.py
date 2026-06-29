@@ -76,3 +76,53 @@ def train(clips, length=40, steps=300, batch_size=64, lr=2e-4, device="cpu",
             if step >= steps:
                 break
     return model, history
+
+
+def train_diffusion(clips, length=40, steps=2000, batch_size=64, lr=2e-4, device="cpu",
+                    weights=None, log_every=50, hidden=256, n_layers=4, num_steps=1000, seed=0):
+    """Train the M4 conditional diffusion model (DiTDenoiser). Returns (model, diffusion, history).
+
+    Per step: noise the GT body to a random diffusion time, denoise it conditioned on the
+    hand, and supervise the predicted clean motion x0 with the SAME combined loss as M2
+    (so FK + hand-consistency apply directly to x0).
+    """
+    import torch
+    from torch.utils.data import DataLoader
+    from .data.dataset import SequenceDataset
+    from .models.diffusion import GaussianDiffusion, DiTDenoiser
+    from . import losses as L
+
+    torch.manual_seed(seed)
+    weights = weights or default_loss_weights()
+    ds = SequenceDataset(clips, length=length, stride=max(1, length // 2), canonicalize=True)
+    if len(ds) == 0:
+        raise ValueError("no training windows — clips shorter than `length`?")
+    dl = DataLoader(ds, batch_size=min(batch_size, len(ds)), shuffle=True, drop_last=False)
+
+    model = DiTDenoiser(hidden=hidden, n_layers=n_layers).to(device)
+    diff = GaussianDiffusion(num_steps=num_steps, device=device)
+    opt = torch.optim.AdamW(model.parameters(), lr=lr)
+
+    history, step = [], 0
+    model.train()
+    while step < steps:
+        for hand, body in dl:
+            hand, body = hand.to(device), body.to(device)
+            t = diff.sample_t(body.shape[0], device)
+            x_t = diff.q_sample(body, t, torch.randn_like(body))
+            x0_hat = model(x_t, t, hand)
+            total, parts = L.compute_losses(x0_hat, body, hand, weights)
+            opt.zero_grad(); total.backward(); opt.step()
+            if step % log_every == 0:
+                history.append({"step": step, "total": float(total.detach()),
+                                **{k: float(v.detach()) for k, v in parts.items()}})
+            step += 1
+            if step >= steps:
+                break
+    return model, diff, history
+
+
+def sample_diffusion(model, diff, hand, steps=8):
+    """Generate body[1..L] from hand[1..L]. hand: (B, L, 12) tensor -> (B, L, 135)."""
+    shape = (hand.shape[0], hand.shape[1], B.MOTION_DIM)
+    return diff.ddim_sample(model, shape, hand, steps=steps, device=hand.device)

@@ -63,16 +63,19 @@ def make_sequence_windows(hand12: np.ndarray, body: np.ndarray, length: int, str
 
 
 def canonicalize_window(hand_w: np.ndarray, body_w: np.ndarray):
-    """Subtract the window-start pelvis from BOTH hand position and body root translation.
+    """Subtract the window-start HAND position from both hand position and body translation.
 
-    Orientation channels are untouched (CONTRACT §5: position is canonicalized, the global
-    wrist orientation is preserved). hand_w (..., L, 12), body_w (..., L, 135). Returns
-    (hand_c, body_c, anchor (...,3))."""
+    The anchor is taken from the HAND (not the pelvis) so it is available at inference time
+    too — at test we only have the hand signal, not the body root we are predicting. Shifting
+    body translation by a constant shifts the FK wrist by the same constant, so hand/body stay
+    consistent. Orientation channels are untouched (CONTRACT §5: position is canonicalized, the
+    global wrist orientation is preserved). hand_w (..., L, 12), body_w (..., L, 135).
+    Returns (hand_c, body_c, anchor (...,3))."""
     from ..representations import frames as F
     from ..representations import body as Bd
     hand_w = np.asarray(hand_w, np.float32).copy()
     body_w = np.asarray(body_w, np.float32).copy()
-    anchor = body_w[..., 0:1, Bd.B_TRANS].copy()              # (..., 1, 3) pelvis at t0
+    anchor = hand_w[..., 0:1, F.HAND12_POS].copy()           # (..., 1, 3) hand pos at t0
     hand_w[..., F.HAND12_POS] -= anchor
     body_w[..., Bd.B_TRANS] -= anchor
     return hand_w, body_w, anchor[..., 0, :]

@@ -16,7 +16,7 @@ import os
 import numpy as np
 import yaml
 
-from h2wb.training import train, synthetic_clips, default_loss_weights
+from h2wb.training import train, train_diffusion, synthetic_clips, default_loss_weights
 
 
 def load_pairs(pairs_dir: str):
@@ -30,12 +30,13 @@ def load_pairs(pairs_dir: str):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default="configs/default.yaml")
+    ap.add_argument("--arch", default="regressor", choices=["regressor", "diffusion"])
     ap.add_argument("--pairs", default="")
     ap.add_argument("--synthetic", action="store_true")
     ap.add_argument("--steps", type=int, default=2000)
     ap.add_argument("--length", type=int, default=40)
     ap.add_argument("--device", default="cuda")
-    ap.add_argument("--out", default="checkpoints/regressor.pt")
+    ap.add_argument("--out", default="")
     args = ap.parse_args()
 
     cfg = yaml.safe_load(open(args.config))
@@ -50,15 +51,21 @@ def main():
 
     import torch
     device = args.device if torch.cuda.is_available() else "cpu"
-    model, history = train(clips, length=args.length, steps=args.steps, device=device,
-                           weights={k: weights[k] for k in
-                                    ("trans", "rot6d", "velocity", "fk_joint", "hand_consistency")
-                                    if k in weights} or None)
+    w = {k: weights[k] for k in
+         ("trans", "rot6d", "velocity", "fk_joint", "hand_consistency") if k in weights} or None
+
+    if args.arch == "diffusion":
+        model, _diff, history = train_diffusion(clips, length=args.length, steps=args.steps,
+                                                device=device, weights=w)
+    else:
+        model, history = train(clips, length=args.length, steps=args.steps, device=device, weights=w)
+
     for h in history:
         print(h)
-    os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
-    torch.save(model.state_dict(), args.out)
-    print(f"saved {args.out}")
+    out = args.out or f"checkpoints/{args.arch}.pt"
+    os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
+    torch.save(model.state_dict(), out)
+    print(f"saved {out}")
 
 
 if __name__ == "__main__":
