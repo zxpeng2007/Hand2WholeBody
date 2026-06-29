@@ -37,6 +37,8 @@ def main():
     ap.add_argument("--steps", type=int, default=2000)
     ap.add_argument("--length", type=int, default=40)
     ap.add_argument("--limit", type=int, default=0, help="cap #sequences from --pkl (0 = all)")
+    ap.add_argument("--val-frac", type=float, default=0.1, help="held-out fraction (by sequence)")
+    ap.add_argument("--eval-every", type=int, default=0, help="run held-out eval every N steps (0=off)")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--out", default="")
     args = ap.parse_args()
@@ -59,16 +61,25 @@ def main():
         clips = synthetic_clips(n_clips=16, T=96)
 
     import torch
+    from h2wb.eval import split_clips
     device = args.device if torch.cuda.is_available() else "cpu"
     w = {k: weights[k] for k in
          ("trans", "rot6d", "velocity", "fk_joint", "hand_consistency") if k in weights} or None
 
-    if args.arch == "diffusion":
-        model, _diff, history = train_diffusion(clips, length=args.length, steps=args.steps,
-                                                device=device, weights=w, rest_joints=rest_joints)
+    if args.val_frac > 0 and len(clips) > 1:
+        train_clips, val_clips = split_clips(clips, val_frac=args.val_frac)
+        print(f"split: {len(train_clips)} train / {len(val_clips)} val sequences")
     else:
-        model, history = train(clips, length=args.length, steps=args.steps, device=device,
-                               weights=w, rest_joints=rest_joints)
+        train_clips, val_clips = clips, None
+
+    if args.arch == "diffusion":
+        model, _diff, history = train_diffusion(train_clips, length=args.length, steps=args.steps,
+                                                device=device, weights=w, rest_joints=rest_joints,
+                                                val_clips=val_clips, eval_every=args.eval_every)
+    else:
+        model, history = train(train_clips, length=args.length, steps=args.steps, device=device,
+                               weights=w, rest_joints=rest_joints,
+                               val_clips=val_clips, eval_every=args.eval_every)
 
     for h in history:
         print(h)

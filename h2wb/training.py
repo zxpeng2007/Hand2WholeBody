@@ -50,7 +50,8 @@ def _rest_tensor(rest_joints, device):
 
 
 def train(clips, length=40, steps=300, batch_size=64, lr=2e-4, device="cpu",
-          weights=None, log_every=50, hidden=256, n_layers=4, seed=0, rest_joints=None):
+          weights=None, log_every=50, hidden=256, n_layers=4, seed=0, rest_joints=None,
+          val_clips=None, eval_every=0):
     """Train the regressor on (hand, body) clips. Returns (model, history list of dicts).
 
     `rest_joints` (22,3): calibrated FK rest skeleton (from pkl_loader.calibrate_rest_joints)
@@ -81,8 +82,14 @@ def train(clips, length=40, steps=300, batch_size=64, lr=2e-4, device="cpu",
             total, parts = L.compute_losses(pred, body, hand, weights, rest_joints=rest)
             opt.zero_grad(); total.backward(); opt.step()
             if step % log_every == 0:
-                history.append({"step": step, "total": float(total.detach()),
-                                **{k: float(v.detach()) for k, v in parts.items()}})
+                entry = {"step": step, "total": float(total.detach()),
+                         **{k: float(v.detach()) for k, v in parts.items()}}
+                if val_clips and eval_every and step % eval_every == 0:
+                    from .eval import evaluate
+                    entry.update(evaluate(model, val_clips, length=length, device=device,
+                                          arch="regressor", rest_joints=rest_joints))
+                    model.train()
+                history.append(entry)
             step += 1
             if step >= steps:
                 break
@@ -91,7 +98,7 @@ def train(clips, length=40, steps=300, batch_size=64, lr=2e-4, device="cpu",
 
 def train_diffusion(clips, length=40, steps=2000, batch_size=64, lr=2e-4, device="cpu",
                     weights=None, log_every=50, hidden=256, n_layers=4, num_steps=1000, seed=0,
-                    rest_joints=None):
+                    rest_joints=None, val_clips=None, eval_every=0, sample_steps=8):
     """Train the M4 conditional diffusion model (DiTDenoiser). Returns (model, diffusion, history).
 
     Per step: noise the GT body to a random diffusion time, denoise it conditioned on the
@@ -127,8 +134,15 @@ def train_diffusion(clips, length=40, steps=2000, batch_size=64, lr=2e-4, device
             total, parts = L.compute_losses(x0_hat, body, hand, weights, rest_joints=rest)
             opt.zero_grad(); total.backward(); opt.step()
             if step % log_every == 0:
-                history.append({"step": step, "total": float(total.detach()),
-                                **{k: float(v.detach()) for k, v in parts.items()}})
+                entry = {"step": step, "total": float(total.detach()),
+                         **{k: float(v.detach()) for k, v in parts.items()}}
+                if val_clips and eval_every and step % eval_every == 0:
+                    from .eval import evaluate
+                    entry.update(evaluate(model, val_clips, length=length, device=device,
+                                          arch="diffusion", diffusion=diff, rest_joints=rest_joints,
+                                          sample_steps=sample_steps))
+                    model.train()
+                history.append(entry)
             step += 1
             if step >= steps:
                 break
