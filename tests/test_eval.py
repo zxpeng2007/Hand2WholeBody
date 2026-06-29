@@ -3,13 +3,13 @@
 import numpy as np
 import pytest
 
-from h2wb.eval import split_clips
+from h2b.eval import split_clips
 
 torch = pytest.importorskip("torch")
 
-from h2wb import training as TR
-from h2wb import eval as EV
-from h2wb.models.regressor import RegressorHand2Body
+from h2b import training as TR
+from h2b import eval as EV
+from h2b.models.regressor import RegressorHand2Body
 
 
 def test_split_is_disjoint_and_deterministic():

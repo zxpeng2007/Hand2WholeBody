@@ -5,7 +5,7 @@ is turned into the 135-D body vector AND its left-wrist 12D via the same FK, so 
 signal is exactly FK(body). That makes the loop verifiable today (the model can drive the
 loss down, and the hand-consistency term is genuinely satisfiable) before real data lands.
 
-`train` runs the regressor with the combined loss (h2wb.losses). Swap `synthetic_clips`
+`train` runs the regressor with the combined loss (h2b.losses). Swap `synthetic_clips`
 for real extracted pairs (scripts/extract_amass.py) with zero changes to `train`.
 """
 

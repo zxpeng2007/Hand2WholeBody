@@ -43,7 +43,7 @@ the left, confirmed by `g1_29dof_rev_1_0_pingpong.urdf`):
   must be preserved, never yaw-canonicalized away.
 - 🔒 Velocity is in **m/s** (frame-rate independent), central finite difference.
 - 🔒 **6D basis convention = Zhou et al. 2019 COLUMNS** (`R6D_COLUMN`: first two columns
-  of R), confirmed 2026-06-29. Single source of truth: `h2wb.representations.frames.PROJECT_R6D`
+  of R), confirmed 2026-06-29. Single source of truth: `h2b.representations.frames.PROJECT_R6D`
   (mirrored in `configs/default.yaml`). The whole project — input extraction, decode,
   internal body rotations, and export — uses this one convention.
 - 🔒 The 6D encodes the **wrist JOINT** orientation (SMPL `left_wrist`, joint 20) —
@@ -71,7 +71,7 @@ Plain **SMPL** (rigid wrist is enough — no SMPL-X fingers). AMASS-style `.npz`
 
 **GMR ingest (verified 2026-06-29):** GMR does NOT read `poses (T,72)`. It reads SMPL-X keys
 `{root_orient (T,3), pose_body (T,63), betas (16,), trans (T,3), gender, mocap_frame_rate}`.
-We emit those directly via `h2wb.inference.generate_to_smplx_npz` (preferred zero-glue path) —
+We emit those directly via `h2b.inference.generate_to_smplx_npz` (preferred zero-glue path) —
 no `smpl_to_smplx.py` pass. `betas[0]` sets the auto-scale (height = 1.66 + 0.1·betas[0]).
 Then: GMR `smplx_to_robot` → G1 `.pkl` → `gmr_to_holomotion` → HoloMotion NPZ (50 fps). Full
 commands + key schemas + G1 29-DoF order in [stage3_runbook.md](stage3_runbook.md).

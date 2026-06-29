@@ -1,7 +1,7 @@
 """Deterministic causal transformer regressor — the M2 baseline / latency floor.
 
 Maps a hand signal sequence hand[1..L] (each frame the 12D vector) to a body motion
-sequence body[1..L] (each frame the 135-D vector, see h2wb.representations.body), with a
+sequence body[1..L] (each frame the 135-D vector, see h2b.representations.body), with a
 CAUSAL self-attention mask so frame t only attends to frames <= t. This makes it directly
 usable in the streaming/online setting (CONTRACT §4).
 

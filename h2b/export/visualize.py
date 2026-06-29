@@ -1,6 +1,6 @@
 """SCHEMATIC quicklook only — a matplotlib 3D stick figure (headless, no SMPL model needed).
 
-For real visualization use h2wb.export.aitviewer_vis (proper SMPL mesh, matches the team's
+For real visualization use h2b.export.aitviewer_vis (proper SMPL mesh, matches the team's
 viewer). This module exists only as a zero-dependency, CI-testable sanity check: it uses the
 APPROXIMATE rest skeleton (smpl_fk._approx_rest_joints), so limb lengths/topology are NOT
 accurate — it shows gross motion/reach, not a faithful body. Do not judge pose quality from it.

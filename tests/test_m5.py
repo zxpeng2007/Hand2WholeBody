@@ -5,11 +5,11 @@ import pytest
 
 torch = pytest.importorskip("torch")
 
-from h2wb.representations import body as B
-from h2wb import inference as INF
-from h2wb import training as TR
-from h2wb.models.regressor import RegressorHand2Body
-from h2wb.models.diffusion import DiTDenoiser, GaussianDiffusion
+from h2b.representations import body as B
+from h2b import inference as INF
+from h2b import training as TR
+from h2b.models.regressor import RegressorHand2Body
+from h2b.models.diffusion import DiTDenoiser, GaussianDiffusion
 
 
 def _hand_seq(T=24, seed=0):
@@ -59,7 +59,7 @@ def test_sequence_too_long_raises():
 
 def test_visualization_writes_png(tmp_path):
     motion = B.smpl72_to_motion(np.zeros((20, 72)), np.tile([0, 0, 1.0], (20, 1)))
-    from h2wb.export.visualize import plot_skeleton_montage
+    from h2b.export.visualize import plot_skeleton_montage
     out = plot_skeleton_montage(motion, str(tmp_path / "viz.png"), n_frames=4)
     assert (tmp_path / "viz.png").exists()
     assert (tmp_path / "viz.png").stat().st_size > 1000

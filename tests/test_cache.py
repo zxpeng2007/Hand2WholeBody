@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from h2wb.data.cache import save_pairs_cache, load_pairs_cache
+from h2b.data.cache import save_pairs_cache, load_pairs_cache
 
 
 def _clips(seed=0):
@@ -40,7 +40,7 @@ def test_label_drop_filter(tmp_path):
 
 
 def test_filter_by_activity_keeps_most_active():
-    from h2wb.data.cache import filter_by_activity, clip_wrist_activity
+    from h2b.data.cache import filter_by_activity, clip_wrist_activity
     quiet = (np.zeros((20, 12), np.float32), np.zeros((20, 135), np.float32))
     active = (np.zeros((20, 12), np.float32), np.zeros((20, 135), np.float32))
     active[0][:, 3:6] = 3.0                       # large wrist velocity channel

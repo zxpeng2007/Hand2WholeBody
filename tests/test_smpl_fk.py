@@ -2,9 +2,9 @@
 
 import numpy as np
 
-from h2wb.data import smpl_fk as FK
-from h2wb.representations import frames as F
-from h2wb.representations import rotations as R
+from h2b.data import smpl_fk as FK
+from h2b.representations import frames as F
+from h2b.representations import rotations as R
 
 
 def test_global_rotations_zero_pose_is_identity():

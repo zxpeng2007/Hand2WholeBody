@@ -13,8 +13,8 @@ from collections import Counter
 
 import numpy as np
 
-from h2wb.data.pkl_loader import load_smpl_pkl, _motion_of, _poses_to_72, sequence_to_pair, calibrate_rest_joints
-from h2wb.data.cache import save_pairs_cache
+from h2b.data.pkl_loader import load_smpl_pkl, _motion_of, _poses_to_72, sequence_to_pair, calibrate_rest_joints
+from h2b.data.cache import save_pairs_cache
 
 
 def _seq_labels(item):

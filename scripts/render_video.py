@@ -14,13 +14,13 @@ import argparse
 import numpy as np
 import torch
 
-from h2wb.data.cache import load_pairs_cache, clip_wrist_activity
-from h2wb.eval import split_clips
-from h2wb.models.diffusion import DiTDenoiser, GaussianDiffusion
-from h2wb.models.regressor import RegressorHand2Body
-from h2wb.models import fk_torch as FKt
-from h2wb import inference as INF
-from h2wb.export.visualize import animate_comparison
+from h2b.data.cache import load_pairs_cache, clip_wrist_activity
+from h2b.eval import split_clips
+from h2b.models.diffusion import DiTDenoiser, GaussianDiffusion
+from h2b.models.regressor import RegressorHand2Body
+from h2b.models import fk_torch as FKt
+from h2b import inference as INF
+from h2b.export.visualize import animate_comparison
 
 
 def main():
@@ -28,7 +28,7 @@ def main():
     ap.add_argument("--cache", default="data/cache/pairs_full.npz")
     ap.add_argument("--checkpoint", default="checkpoints/diffusion_full.pt")
     ap.add_argument("--arch", default="diffusion", choices=["diffusion", "regressor"])
-    ap.add_argument("--out", default="h2wb_result.mp4")
+    ap.add_argument("--out", default="h2b_result.mp4")
     ap.add_argument("--seq", type=int, default=-1, help="val clip index; -1 = most active")
     ap.add_argument("--max-frames", type=int, default=180)
     ap.add_argument("--fps", type=int, default=30)

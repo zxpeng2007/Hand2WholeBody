@@ -1,4 +1,4 @@
-"""Differentiable (torch) rotation ops mirroring h2wb.representations.rotations.
+"""Differentiable (torch) rotation ops mirroring h2b.representations.rotations.
 
 Hardcoded to the project's Zhou-2019 COLUMN convention (frames.PROJECT_R6D) — the model
 and losses operate entirely in that convention, so there is no convention argument to get

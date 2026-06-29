@@ -8,10 +8,10 @@ Visualizes:
 
 Requires aitviewer + SMPL model files configured in aitviewer's config (licensed; not in the
 repo) and a display/GL context — runs on a workstation, not headless CI. Imports are lazy so
-the rest of h2wb never depends on aitviewer.
+the rest of h2b never depends on aitviewer.
 
-    python -m h2wb.export.aitviewer_vis --input generated.npz
-    python -m h2wb.export.aitviewer_vis --input train.pkl --seq_idx 0 --model_type smpl
+    python -m h2b.export.aitviewer_vis --input generated.npz
+    python -m h2b.export.aitviewer_vis --input train.pkl --seq_idx 0 --model_type smpl
 """
 
 from __future__ import annotations

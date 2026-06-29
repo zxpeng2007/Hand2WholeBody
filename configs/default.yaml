@@ -10,7 +10,7 @@ representation:
   # one of: pytorch3d_row | zhou_column. Single source of truth is frames.PROJECT_R6D.
   paddle_hand_joint: 20        # SMPL left_wrist
   num_body_joints: 22          # SMPL joints 0..21 (drop rigid hand joints 22/23)
-  motion_dim: 135              # root_trans(3) + 22 joints x 6D(132); h2wb.representations.body
+  motion_dim: 135              # root_trans(3) + 22 joints x 6D(132); h2b.representations.body
   num_betas: 10
 
 hand_signal:
@@ -38,7 +38,7 @@ model:
     sample_steps: 8
     schedule: cosine
 
-loss:                          # keys match h2wb.losses.compute_losses
+loss:                          # keys match h2b.losses.compute_losses
   trans: 1.0
   rot6d: 1.0
   velocity: 0.5

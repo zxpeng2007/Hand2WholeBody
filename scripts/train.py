@@ -16,7 +16,7 @@ import os
 import numpy as np
 import yaml
 
-from h2wb.training import train, train_diffusion, synthetic_clips, default_loss_weights
+from h2b.training import train, train_diffusion, synthetic_clips, default_loss_weights
 
 
 def load_pairs(pairs_dir: str):
@@ -54,7 +54,7 @@ def main():
 
     rest_joints = None
     if args.cache:
-        from h2wb.data.cache import load_pairs_cache
+        from h2b.data.cache import load_pairs_cache
         clips, rest_joints = load_pairs_cache(
             args.cache,
             keep_labels=[s for s in args.keep_labels.split(",") if s] or None,
@@ -64,7 +64,7 @@ def main():
         print(f"loaded {len(clips)} sequences from cache {args.cache}; "
               f"rest_joints {'calibrated' if rest_joints is not None else 'approx'}")
     elif args.pkl:
-        from h2wb.data.pkl_loader import load_clips
+        from h2b.data.pkl_loader import load_clips
         clips, rest_joints = load_clips(args.pkl, fps=cfg["frame"]["fps"],
                                         limit=(args.limit or None))
         print(f"loaded {len(clips)} sequences from {args.pkl}; "
@@ -77,13 +77,13 @@ def main():
         clips = synthetic_clips(n_clips=16, T=96)
 
     import torch
-    from h2wb.eval import split_clips
+    from h2b.eval import split_clips
     device = args.device if torch.cuda.is_available() else "cpu"
     w = {k: weights[k] for k in
          ("trans", "rot6d", "velocity", "fk_joint", "hand_consistency") if k in weights} or None
 
     if args.top_activity_frac > 0:
-        from h2wb.data.cache import filter_by_activity
+        from h2b.data.cache import filter_by_activity
         n0 = len(clips)
         clips, acts = filter_by_activity(clips, top_frac=args.top_activity_frac)
         print(f"activity filter: kept {len(clips)}/{n0} most-active clips "

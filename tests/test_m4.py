@@ -8,13 +8,13 @@ import pytest
 
 torch = pytest.importorskip("torch")
 
-from h2wb.representations import body as B
-from h2wb.representations import rotations as Rnp
-from h2wb.data.dataset import SequenceDataset
-from h2wb.models import fk_torch as FKt
-from h2wb.models.diffusion import GaussianDiffusion, DiTDenoiser, cosine_beta_schedule
-from h2wb.models.streaming import DiffusionStreamer
-from h2wb import training as TR
+from h2b.representations import body as B
+from h2b.representations import rotations as Rnp
+from h2b.data.dataset import SequenceDataset
+from h2b.models import fk_torch as FKt
+from h2b.models.diffusion import GaussianDiffusion, DiTDenoiser, cosine_beta_schedule
+from h2b.models.streaming import DiffusionStreamer
+from h2b import training as TR
 
 
 def test_cosine_schedule_sane():

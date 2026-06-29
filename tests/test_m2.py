@@ -8,15 +8,15 @@ import pytest
 
 torch = pytest.importorskip("torch")
 
-from h2wb.representations import body as B
-from h2wb.representations import frames as F
-from h2wb.representations import rotations as Rnp
-from h2wb.representations import rotations_torch as Rt
-from h2wb.data import smpl_fk as FK
-from h2wb.data.dataset import make_sequence_windows, canonicalize_window
-from h2wb.models import fk_torch as FKt
-from h2wb.models.regressor import RegressorHand2Body
-from h2wb import training as TR
+from h2b.representations import body as B
+from h2b.representations import frames as F
+from h2b.representations import rotations as Rnp
+from h2b.representations import rotations_torch as Rt
+from h2b.data import smpl_fk as FK
+from h2b.data.dataset import make_sequence_windows, canonicalize_window
+from h2b.models import fk_torch as FKt
+from h2b.models.regressor import RegressorHand2Body
+from h2b import training as TR
 
 
 def test_torch_rotation_parity_with_numpy():

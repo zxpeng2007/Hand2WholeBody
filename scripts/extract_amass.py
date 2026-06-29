@@ -7,7 +7,7 @@ Without the SMPL model you can still smoke-test the pipeline on synthetic joints
     python scripts/extract_amass.py --amass DIR --synthetic --out data/pairs
 
 Each input AMASS .npz (keys: poses (T,156) SMPL-H, trans, betas, mocap_framerate) is
-resampled to --fps, the left-wrist 12D is derived by FK (h2wb.data.smpl_fk), and the
+resampled to --fps, the left-wrist 12D is derived by FK (h2b.data.smpl_fk), and the
 (hand12, body) pair is saved. `body` packs root_trans + root_orient_6d + 22 body-joint
 rot6D to match the model output layout (see configs/default.yaml).
 """
@@ -20,10 +20,10 @@ import os
 
 import numpy as np
 
-from h2wb.data import smpl_fk as FK
-from h2wb.representations import body as BODY
-from h2wb.representations import frames as F
-from h2wb.representations import rotations as R
+from h2b.data import smpl_fk as FK
+from h2b.representations import body as BODY
+from h2b.representations import frames as F
+from h2b.representations import rotations as R
 
 
 def resample(arr: np.ndarray, src_fps: float, dst_fps: float) -> np.ndarray:
@@ -39,7 +39,7 @@ def resample(arr: np.ndarray, src_fps: float, dst_fps: float) -> np.ndarray:
 
 
 def smpl_body_vector(poses72: np.ndarray, trans: np.ndarray) -> np.ndarray:
-    """Pack the 135-D body target via the shared representation (h2wb.representations.body)."""
+    """Pack the 135-D body target via the shared representation (h2b.representations.body)."""
     return BODY.smpl72_to_motion(poses72, trans)
 
 

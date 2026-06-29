@@ -20,7 +20,7 @@ from .rotations import matrix_to_rotation_6d, rotation_6d_to_matrix, R6D_COLUMN
 
 # ---- PROJECT 6D CONVENTION — single source of truth ---------------------- #
 # CONFIRMED 2026-06-29: the upstream 12D wrist orientation uses the Zhou et al. 2019
-# COLUMN packing (first two columns of R). Everything in h2wb (input extraction,
+# COLUMN packing (first two columns of R). Everything in h2b (input extraction,
 # decode, internal body rotations, export) reads this constant — change it in ONE
 # place if the contract ever changes. Mirrors configs/default.yaml rot6d_convention.
 PROJECT_R6D = R6D_COLUMN

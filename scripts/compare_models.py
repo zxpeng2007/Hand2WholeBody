@@ -14,10 +14,10 @@ import os
 
 import torch
 
-from h2wb.data.cache import load_pairs_cache
-from h2wb.eval import split_clips, evaluate
-from h2wb.models.regressor import RegressorHand2Body
-from h2wb.models.diffusion import DiTDenoiser, GaussianDiffusion
+from h2b.data.cache import load_pairs_cache
+from h2b.eval import split_clips, evaluate
+from h2b.models.regressor import RegressorHand2Body
+from h2b.models.diffusion import DiTDenoiser, GaussianDiffusion
 
 
 def main():

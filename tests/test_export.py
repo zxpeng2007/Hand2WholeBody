@@ -2,9 +2,9 @@
 
 import numpy as np
 
-from h2wb.export import to_amass_npz as EX
-from h2wb.representations import frames as F
-from h2wb.representations import rotations as R
+from h2b.export import to_amass_npz as EX
+from h2b.representations import frames as F
+from h2b.representations import rotations as R
 
 
 def test_motion6d_to_aa_shapes_and_roundtrip():

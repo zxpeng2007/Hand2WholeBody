@@ -42,22 +42,22 @@ def main():
     args = ap.parse_args()
 
     import torch
-    from h2wb.inference import generate_to_npz, generate
+    from h2b.inference import generate_to_npz, generate
     device = args.device if torch.cuda.is_available() else "cpu"
 
     if args.synthetic or not args.hand:
-        from h2wb.training import synthetic_clips
+        from h2b.training import synthetic_clips
         hand = synthetic_clips(n_clips=1, T=64)[0][0]
     else:
         hand = load_hand(args.hand)
 
     diffusion = None
     if args.arch == "diffusion":
-        from h2wb.models.diffusion import DiTDenoiser, GaussianDiffusion
+        from h2b.models.diffusion import DiTDenoiser, GaussianDiffusion
         model = DiTDenoiser(hidden=args.hidden, n_layers=args.n_layers).to(device)
         diffusion = GaussianDiffusion(device=device)
     else:
-        from h2wb.models.regressor import RegressorHand2Body
+        from h2b.models.regressor import RegressorHand2Body
         model = RegressorHand2Body(hidden=args.hidden, n_layers=args.n_layers).to(device)
     if args.checkpoint:
         model.load_state_dict(torch.load(args.checkpoint, map_location=device))
@@ -67,13 +67,13 @@ def main():
     print(f"wrote SMPL motion: {path}  (frames={len(hand)})")
 
     if args.gmr_out:
-        from h2wb.inference import generate_to_smplx_npz
+        from h2b.inference import generate_to_smplx_npz
         gp = generate_to_smplx_npz(args.gmr_out, model, hand, arch=args.arch, diffusion=diffusion,
                                    sample_steps=args.steps, device=device, height_m=args.height)
         print(f"wrote GMR-ready SMPL-X: {gp}")
 
     if args.viz:
-        from h2wb.export.visualize import plot_skeleton_montage
+        from h2b.export.visualize import plot_skeleton_montage
         motion = generate(model, hand, arch=args.arch, diffusion=diffusion,
                           sample_steps=args.steps, device=device)
         plot_skeleton_montage(motion, args.viz, title=f"{args.arch} generated")

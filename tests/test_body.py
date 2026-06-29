@@ -1,10 +1,10 @@
-"""Tests for the 135-D body-motion representation (h2wb.representations.body)."""
+"""Tests for the 135-D body-motion representation (h2b.representations.body)."""
 
 import numpy as np
 
-from h2wb.representations import body as B
-from h2wb.representations import frames as F
-from h2wb.representations import rotations as R
+from h2b.representations import body as B
+from h2b.representations import frames as F
+from h2b.representations import rotations as R
 
 
 def test_motion_dim_constants():

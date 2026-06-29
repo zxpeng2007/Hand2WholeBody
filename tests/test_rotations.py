@@ -1,4 +1,4 @@
-"""Round-trip and convention tests for h2wb.representations.rotations.
+"""Round-trip and convention tests for h2b.representations.rotations.
 
 These pin the rotation contract. If the upstream 6D basis differs, a
 failure here is the first place it surfaces.
@@ -7,7 +7,7 @@ failure here is the first place it surfaces.
 import numpy as np
 import pytest
 
-from h2wb.representations import rotations as R
+from h2b.representations import rotations as R
 
 
 def _random_rotations(n, seed=0):

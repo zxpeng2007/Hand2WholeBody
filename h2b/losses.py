@@ -1,6 +1,6 @@
 """Training objective for Hand2Body (weights in configs/default.yaml `loss`).
 
-Operates on the model's 135-D motion output (h2wb.representations.body) and the input 12D
+Operates on the model's 135-D motion output (h2b.representations.body) and the input 12D
 hand signal. Terms:
   * trans            — root translation L2.
   * rot6d            — 6D joint-rotation L2 (all 22 joints incl. global_orient).

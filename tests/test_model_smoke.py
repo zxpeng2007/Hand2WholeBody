@@ -10,8 +10,8 @@ import pytest
 
 torch = pytest.importorskip("torch")
 
-from h2wb.models.diffmlp import DiffMLP
-from h2wb.data.dataset import Hand2BodyDataset
+from h2b.models.diffmlp import DiffMLP
+from h2b.data.dataset import Hand2BodyDataset
 
 
 def test_diffmlp_forward_shapes():

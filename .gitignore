@@ -6,7 +6,7 @@ __pycache__/
 .pytest_cache/
 
 # data / models / outputs (large, local) — anchored to repo root so they do NOT
-# match source packages like h2wb/data/ or h2wb/models/.
+# match source packages like h2b/data/ or h2b/models/.
 /data/
 /checkpoints/
 /runs/

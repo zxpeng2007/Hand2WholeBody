@@ -33,7 +33,7 @@ The 6D convention is Zhou-2019 columns (`frames.PROJECT_R6D`); the models map
 python scripts/train.py --synthetic                                     # smoke-test the loop, no data
 python scripts/train.py --pkl train.pkl --arch diffusion --steps 20000  # train on real data (FK-extracts the 12D)
 python scripts/generate.py --arch diffusion --checkpoint checkpoints/diffusion.pt --hand H.npy --out out.npz
-python -m h2wb.export.aitviewer_vis --input out.npz                     # view a generated clip
+python -m h2b.export.aitviewer_vis --input out.npz                     # view a generated clip
 ```
 
 ### Mesh visualization (aitviewer)
@@ -49,7 +49,7 @@ python scripts/render_aitviewer.py --cache data/cache/pairs_full.npz \
 ```
 
 `clean_smpl_models.py` converts the chumpy/numpy-1 release into the `SMPL_{GENDER}.pkl` layout
-smplx/aitviewer expect (works under numpy 2.x). `h2wb.export.visualize` + `scripts/render_video.py`
+smplx/aitviewer expect (works under numpy 2.x). `h2b.export.visualize` + `scripts/render_video.py`
 are a schematic, dependency-light headless fallback (no models needed).
 
 ## Layout
@@ -58,7 +58,7 @@ are a schematic, dependency-light headless fallback (no models needed).
 assets/urdf/        ball · table · g1 pingpong   (world-frame source of truth)
 configs/            default.yaml
 docs/               CONTRACT.md (data contract) · stage3_runbook.md (GMR→HoloMotion) · results.md · img/
-h2wb/
+h2b/
   representations/  rotations, frames (world/SMPL/12D), body (135-D), rotations_torch
   data/             smpl_fk (SMPL→12D), pkl_loader (train.pkl), cache, dataset
   models/           diffusion (DiT denoiser), regressor, fk_torch, streaming

@@ -7,7 +7,7 @@ release with scripts/clean_smpl_models.py, then pass --smpl-models <dir> (folder
     # 30-second mesh video from a checkpoint, elevated wide camera:
     python scripts/render_aitviewer.py --cache data/cache/pairs_full.npz \
         --checkpoint checkpoints/diffusion_full.pt --smpl-models C:/.../smpl_models \
-        --seconds 30 --out Downloads/h2wb_mesh.mp4
+        --seconds 30 --out Downloads/h2b_mesh.mp4
 
 aitviewer is Y-up internally while our data is Z-up (z_up=True remaps data-z -> viewer-y), so
 the camera is set in the VIEWER frame: x = table length, y = height, z = -table width.
@@ -30,7 +30,7 @@ def main():
     ap.add_argument("--smpl-models", default="", help="dir with SMPL model files (sets aitviewer config)")
     ap.add_argument("--gender", default="male")
     ap.add_argument("--model-type", default="smpl", choices=["smpl", "smplx"])
-    ap.add_argument("--out", default="h2wb_mesh.mp4")
+    ap.add_argument("--out", default="h2b_mesh.mp4")
     ap.add_argument("--seconds", type=float, default=0.0, help="target duration; 0 = use --max-frames")
     ap.add_argument("--max-frames", type=int, default=250)
     ap.add_argument("--fps", type=int, default=30)
@@ -60,12 +60,12 @@ def main():
         poses, trans = np.asarray(d["poses"]), np.asarray(d["trans"])
     elif args.cache:
         import torch
-        from h2wb.data.cache import load_pairs_cache, clip_wrist_activity
-        from h2wb.eval import split_clips
-        from h2wb.representations import body as B
-        from h2wb import inference as INF
-        from h2wb.models.diffusion import DiTDenoiser, GaussianDiffusion
-        from h2wb.models.regressor import RegressorHand2Body
+        from h2b.data.cache import load_pairs_cache, clip_wrist_activity
+        from h2b.eval import split_clips
+        from h2b.representations import body as B
+        from h2b import inference as INF
+        from h2b.models.diffusion import DiTDenoiser, GaussianDiffusion
+        from h2b.models.regressor import RegressorHand2Body
         clips, _ = load_pairs_cache(args.cache)
         _, val = split_clips(clips, val_frac=0.1, seed=0)
         lens = np.array([len(c[0]) for c in val])
@@ -88,7 +88,7 @@ def main():
 
     poses, trans = poses[:target_frames], trans[:target_frames]
     from aitviewer.headless import HeadlessRenderer
-    from h2wb.export.aitviewer_vis import _table_mesh, _net_mesh, _smpl_sequence
+    from h2b.export.aitviewer_vis import _table_mesh, _net_mesh, _smpl_sequence
     seq = _smpl_sequence(poses, trans, args.gender, args.model_type)
     r = HeadlessRenderer()
     r.scene.add(_table_mesh()); r.scene.add(_net_mesh()); r.scene.add(seq)

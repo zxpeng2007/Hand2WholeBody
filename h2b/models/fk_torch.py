@@ -8,7 +8,7 @@ joint positions, so we can:
 
 Joint POSITIONS need rest-pose joint offsets, which depend on the SMPL model (betas).
 We inject them via `rest_joints` (default = the model-free approximation from
-h2wb.data.smpl_fk; swap in the real model's J once the SMPL build ships). Global
+h2b.data.smpl_fk; swap in the real model's J once the SMPL build ships). Global
 ROTATIONS need only the pose, so they are exact regardless.
 """
 

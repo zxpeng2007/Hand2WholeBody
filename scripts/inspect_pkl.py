@@ -4,7 +4,7 @@ structure: types, dict keys, array shapes/dtypes, lengths, and small value sampl
     python scripts/inspect_pkl.py path/to/train.pkl
 
 Use this the moment train.pkl arrives to learn its schema, then wire a loader in
-h2wb/data/ that maps it to (poses (T,72) axis-angle, trans (T,3), betas, fps) so
+h2b/data/ that maps it to (poses (T,72) axis-angle, trans (T,3), betas, fps) so
 scripts/extract_amass.py-style FK extraction can derive the 12D left-wrist signal.
 """
 
@@ -19,7 +19,7 @@ import numpy as np
 def _load(path):
     """Prefer the joblib loader (with numpy._core shim); fall back to plain pickle."""
     try:
-        from h2wb.data.pkl_loader import load_smpl_pkl
+        from h2b.data.pkl_loader import load_smpl_pkl
         return load_smpl_pkl(path)
     except Exception:
         with open(path, "rb") as f:

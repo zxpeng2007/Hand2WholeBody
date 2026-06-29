@@ -49,7 +49,7 @@ python scripts/compare_models.py --cache data/cache/pairs_full.npz
 # 4) generate + export a clip (AMASS + GMR-ready SMPL-X) and view
 python scripts/generate.py --arch diffusion --checkpoint checkpoints/diffusion_full.pt \
     --hand HAND.npy --out clip.npz --gmr-out clip_smplx.npz
-python -m h2wb.export.aitviewer_vis --input clip.npz
+python -m h2b.export.aitviewer_vis --input clip.npz
 ```
 
 Note: `act_cat` is uniformly `walk` for all sequences (vestigial BABEL label), so metadata

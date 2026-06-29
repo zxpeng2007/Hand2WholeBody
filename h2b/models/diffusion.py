@@ -11,7 +11,7 @@ Pieces:
     frame on the 12D hand and on the diffusion timestep. Predicts x0 (the clean body),
     which lets us add the geometric/hand-consistency losses directly on x0.
 
-x0-prediction (not eps) is chosen so h2wb.losses.compute_losses (FK, hand-consistency)
+x0-prediction (not eps) is chosen so h2b.losses.compute_losses (FK, hand-consistency)
 applies to the predicted clean motion with no reparameterization.
 """
 

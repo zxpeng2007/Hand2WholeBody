@@ -6,10 +6,10 @@ import pytest
 
 joblib = pytest.importorskip("joblib")
 
-from h2wb.data import pkl_loader as PL
-from h2wb.data import smpl_fk as FK
-from h2wb.representations import body as B
-from h2wb.representations import frames as F
+from h2b.data import pkl_loader as PL
+from h2b.data import smpl_fk as FK
+from h2b.representations import body as B
+from h2b.representations import frames as F
 
 
 def _make_pkl(tmp_path, n_seq=3, seed=0):
@@ -53,7 +53,7 @@ def test_hand_position_uses_real_joints(tmp_path):
 
 def test_calibrated_rest_reproduces_joints(tmp_path):
     torch = pytest.importorskip("torch")
-    from h2wb.models import fk_torch as FKt
+    from h2b.models import fk_torch as FKt
     seqs = list(PL.iter_sequences(PL.load_smpl_pkl(_make_pkl(tmp_path, 1))))
     s = seqs[0]
     poses72 = PL._poses_to_72(s["poses"])

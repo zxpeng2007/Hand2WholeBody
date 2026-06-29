@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from h2wb.data.dataset import make_causal_windows
+from h2b.data.dataset import make_causal_windows
 
 
 def test_window_shapes_and_count():

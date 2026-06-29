@@ -1,9 +1,9 @@
-"""Tests for h2wb.representations.frames: 12D packing, velocity, canonicalization."""
+"""Tests for h2b.representations.frames: 12D packing, velocity, canonicalization."""
 
 import numpy as np
 
-from h2wb.representations import frames as F
-from h2wb.representations import rotations as R
+from h2b.representations import frames as F
+from h2b.representations import rotations as R
 
 
 def test_hand12_pack_unpack_roundtrip():

@@ -1,7 +1,7 @@
 """Offline generation: a hand 12D sequence -> whole-body SMPL -> AMASS-style .npz.
 
 Single-shot over the whole sequence (the causal transformer handles any length up to its
-positional budget). For true online/streaming use h2wb.models.streaming.DiffusionStreamer.
+positional budget). For true online/streaming use h2b.models.streaming.DiffusionStreamer.
 The exported .npz is the Stage-3 handoff (CONTRACT §3) for GMR -> HoloMotion.
 """
 
@@ -21,7 +21,7 @@ def generate(model, hand12, arch="regressor", diffusion=None, sample_steps=8, de
     max_len = getattr(getattr(model, "pos", None), "shape", [0, 999])[1]
     if T > max_len:
         raise ValueError(f"sequence length {T} exceeds model positional budget {max_len}; "
-                         "use h2wb.models.streaming.DiffusionStreamer for long/online sequences")
+                         "use h2b.models.streaming.DiffusionStreamer for long/online sequences")
     anchor = hand[0:1, F.HAND12_POS].copy()                 # (1,3) inference anchor
     hand_c = hand.copy()
     hand_c[:, F.HAND12_POS] -= anchor

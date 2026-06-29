@@ -5,7 +5,7 @@ directly; GMR retargets human SMPL → Unitree G1. The documented entry artifact
 pipeline is an AMASS-style SMPL .npz, which is exactly what we write here.
 
 Implemented in NumPy (no torch needed) so it runs anywhere. The model produces rotations
-in 6D internally; convert to axis-angle (via h2wb.representations.rotations) before
+in 6D internally; convert to axis-angle (via h2b.representations.rotations) before
 calling this.
 """
 
