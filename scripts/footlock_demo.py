@@ -29,26 +29,32 @@ def main():
     ap.add_argument("--checkpoint", default="checkpoints/diffusion_full.pt")
     ap.add_argument("--out", default="footlock.mp4")
     ap.add_argument("--seq", type=int, default=-1)
+    ap.add_argument("--seconds", type=float, default=0.0, help="target duration; 0 = use --max-frames")
     ap.add_argument("--max-frames", type=int, default=180)
     ap.add_argument("--iters", type=int, default=300)
     ap.add_argument("--device", default="cpu")
     args = ap.parse_args()
 
+    target = int(args.seconds * 30) if args.seconds > 0 else args.max_frames
     clips, rest = load_pairs_cache(args.cache)
     _, val = split_clips(clips, val_frac=0.1, seed=0)
+    lens = np.array([len(c[0]) for c in val])
+    acts = np.array([clip_wrist_activity(c) for c in val])
     if args.seq >= 0:
         idx = args.seq
+    elif args.seconds > 0:                                        # need a clip long enough
+        elig = np.where(lens >= target)[0]
+        idx = int(elig[np.argmax(acts[elig])]) if len(elig) else int(np.argmax(lens))
     else:
-        acts = np.array([clip_wrist_activity(c) for c in val])
-        lens = np.minimum([len(c[0]) for c in val], args.max_frames)
-        idx = int(np.argmax(acts * lens))
+        idx = int(np.argmax(acts * np.minimum(lens, target)))
     hand, _ = val[idx]
-    hand = hand[:args.max_frames]
+    hand = hand[:target]
 
     model = DiTDenoiser(hidden=256, n_layers=4).to(args.device)
     model.load_state_dict(torch.load(args.checkpoint, map_location=args.device))
     diff = GaussianDiffusion(device=args.device)
-    motion = INF.generate(model, hand, arch="diffusion", diffusion=diff, sample_steps=8, device=args.device)
+    gen = INF.generate_long if len(hand) > 256 else INF.generate     # chunked for >256 frames
+    motion = gen(model, hand, arch="diffusion", diffusion=diff, sample_steps=8, device=args.device)
 
     locked, contact = footlock(motion, hand=hand, rest_joints=rest, iters=args.iters, device=args.device)
 
