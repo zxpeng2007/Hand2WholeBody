@@ -44,7 +44,9 @@ def evaluate(model, val_clips, length=40, device="cpu", arch="regressor", diffus
     from .data.dataset import SequenceDataset
     from .models import fk_torch as FK
     from .representations import rotations_torch as RT
+    from .representations import frames as F
 
+    feet = list(F.FOOT_JOINTS)
     ds = SequenceDataset(val_clips, length=length, stride=length, canonicalize=True)
     if len(ds) == 0:
         return {}
@@ -52,7 +54,7 @@ def evaluate(model, val_clips, length=40, device="cpu", arch="regressor", diffus
     dl = DataLoader(ds, batch_size=min(64, len(ds)), shuffle=False)
 
     model.eval()
-    mpjpe, wpos, wdeg, jit, n = 0.0, 0.0, 0.0, 0.0, 0
+    mpjpe, wpos, wdeg, jit, skate, n = 0.0, 0.0, 0.0, 0.0, 0.0, 0
     seen = 0
     with torch.no_grad():
         for hand, body in dl:
@@ -72,6 +74,13 @@ def evaluate(model, val_clips, length=40, device="cpu", arch="regressor", diffus
                                   RT.rotation_6d_to_matrix(hand[..., 6:12])).mean().item() * hand.shape[0]
             acc = pred_pos[:, 2:] - 2 * pred_pos[:, 1:-1] + pred_pos[:, :-2]
             jit += acc.norm(dim=-1).mean().item() * hand.shape[0] * (fps ** 2)
+            # foot-skate: horizontal foot speed (m/s) over near-ground frames
+            fpos = pred_pos[..., feet, :]
+            fheight = fpos[..., 2]
+            near = (fheight < fheight.min(dim=1, keepdim=True).values + 0.05).float()
+            hspeed = torch.zeros_like(fheight)
+            hspeed[:, 1:] = ((fpos[:, 1:, :, :2] - fpos[:, :-1, :, :2]) * fps).norm(dim=-1)
+            skate += ((hspeed * near).sum() / (near.sum() + 1e-6)).item() * hand.shape[0]
             n += hand.shape[0]
             seen += hand.shape[0]
     return {
@@ -79,5 +88,6 @@ def evaluate(model, val_clips, length=40, device="cpu", arch="regressor", diffus
         "val_wrist_pos_mm": 1000.0 * wpos / n,
         "val_wrist_deg": wdeg / n,
         "val_jitter": jit / n,
+        "val_footskate_mm_s": 1000.0 * skate / n,
         "val_windows": n,
     }

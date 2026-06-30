@@ -44,6 +44,7 @@ loss:                          # keys match h2b.losses.compute_losses
   velocity: 0.5
   fk_joint: 1.0                # FK joint-position loss (vs GT pose)
   hand_consistency: 2.0        # FK paddle wrist must match input 12D (closes the loop)
+  foot_contact: 0.5            # anti foot-skate: planted feet (per GT contact) should not move
 
 data:
   amass_root: ""               # set to local AMASS dir once available

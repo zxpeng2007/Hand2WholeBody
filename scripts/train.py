@@ -80,7 +80,8 @@ def main():
     from h2b.eval import split_clips
     device = args.device if torch.cuda.is_available() else "cpu"
     w = {k: weights[k] for k in
-         ("trans", "rot6d", "velocity", "fk_joint", "hand_consistency") if k in weights} or None
+         ("trans", "rot6d", "velocity", "fk_joint", "hand_consistency", "foot_contact")
+         if k in weights} or None
 
     if args.top_activity_frac > 0:
         from h2b.data.cache import filter_by_activity
