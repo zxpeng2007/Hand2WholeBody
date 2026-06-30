@@ -107,3 +107,19 @@ def test_streamer_block():
     assert out.shape == (4, B.MOTION_DIM) and np.isfinite(out).all()
     out2 = s.push_block(np.ones((4, 12), np.float32))    # next block, window slides
     assert out2.shape == (4, B.MOTION_DIM) and np.isfinite(out2).all()
+
+
+def test_leg_smooth_preserves_wrist():
+    # smoothing the leg joints must NOT move the FK wrist (disjoint kinematic chains) — this is
+    # why leg-only smoothing fixes G1 leg shake without the wrist lag a whole-body filter caused.
+    from h2b.models.streaming import OneEuroFilter, _LEG_COLS
+    from h2b import training as TR
+    motion = TR.synthetic_clips(n_clips=1, T=30, seed=0)[0][1]      # (T,135)
+    wp0, _ = FKt.left_wrist_pose(torch.tensor(motion)[None])
+    sm = motion.copy()
+    f = OneEuroFilter(0.6, 0.1)
+    for t in range(len(sm)):
+        sm[t, _LEG_COLS] = f(sm[t, _LEG_COLS])
+    wp1, _ = FKt.left_wrist_pose(torch.tensor(sm)[None])
+    assert np.allclose(wp0.numpy(), wp1.numpy(), atol=1e-6)         # wrist untouched
+    assert not np.allclose(motion[:, _LEG_COLS], sm[:, _LEG_COLS])  # legs actually changed

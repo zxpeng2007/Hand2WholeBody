@@ -66,14 +66,17 @@ def generate_long(model, hand12, chunk=250, overlap=50, **kw):
     return out
 
 
-def generate_stream(model, hand12, diffusion, window=16, block=4, sample_steps=2, device="cpu"):
+def generate_stream(model, hand12, diffusion, window=16, block=4, sample_steps=2, device="cpu",
+                    smooth_legs=True, leg_min_cutoff=0.6, leg_beta=0.1):
     """Streaming/online generation via DiffusionStreamer: feed the hand in blocks of `block`,
     collect the emitted body frames. Causal + block-amortized -- this is the REAL-TIME path
-    (vs generate_long, which is offline single-shot/chunked). hand12 (T,12) world -> (T,135) world."""
+    (vs generate_long, which is offline single-shot/chunked). `smooth_legs` applies the causal
+    leg-only 1-Euro smoother (kills G1 leg shake, wrist untouched). hand12 (T,12) -> (T,135)."""
     from .models.streaming import DiffusionStreamer
     hand12 = np.asarray(hand12, np.float32)
-    st = DiffusionStreamer(model, diffusion, window=window, block=block,
-                           sample_steps=sample_steps, device=device)
+    st = DiffusionStreamer(model, diffusion, window=window, block=block, sample_steps=sample_steps,
+                           device=device, smooth_legs=smooth_legs, leg_min_cutoff=leg_min_cutoff,
+                           leg_beta=leg_beta)
     out = []
     for i in range(0, len(hand12), block):
         r = st.push_block(hand12[i:i + block])

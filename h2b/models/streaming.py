@@ -20,9 +20,12 @@ Window/latency/quality (measured, RTX 5080, trained model):
   * Quality, though, depends on the window: a very short window is jerky at the block seams
     (jitter ~12 at w=5 vs ~6 at w=16 vs offline ~3.6); wrist tracking stays tight (~8 mm) until
     the window grows long enough to re-introduce anchor drift (>~20). Sweet spot ~window=16.
-  * Output smoothing was tried and rejected: a 1-Euro filter on the body lags the extended wrist
-    badly (8 mm -> 100 mm+), and leg-only smoothing barely dents the (whole-body) jitter. The
-    fix is the window size, not a post-filter.
+  * Output smoothing: a 1-Euro filter on the WHOLE body lags the extended wrist badly
+    (8 mm -> 100 mm+), so that was rejected. But the LEGS are unconstrained (no hand info) and are
+    the jitteriest joints (~9.5 vs 6.4 whole-body), and GMR carries that straight to the G1's legs.
+    The legs are a separate kinematic chain from the wrist (pelvis->leg vs pelvis->spine->arm->wrist),
+    so a causal 1-Euro filter on the LEG joints only kills the leg shake at zero latency and leaves
+    wrist tracking mathematically untouched -- that is `smooth_legs` below (on by default).
 
 Speed pass (investigated 2026-06-30, RTX 5080 laptop / torch 2.11 / Windows):
   * The streamer is LAUNCH-bound -- per-sample time is ~flat for window 5..32 -- so a classic
@@ -46,12 +49,48 @@ import numpy as np
 from ..representations import frames as F
 from ..representations import body as B
 
+# SMPL leg chain (hips, knees, ankles, feet) — disjoint from the pelvis->spine->arm->wrist chain,
+# so smoothing these never moves the FK wrist. 135-D layout: trans(0:3) then 22 joints x 6D.
+_LEG_JOINTS = (1, 2, 4, 5, 7, 8, 10, 11)
+_LEG_COLS = np.array([3 + j * 6 + k for j in _LEG_JOINTS for k in range(6)])
+
+
+class OneEuroFilter:
+    """Causal 1-Euro filter (Casiez et al. 2012), per channel. Adaptive cutoff: smooths hard when
+    slow (kills jitter), opens up when fast (no lag on real motion). No lookahead -> zero latency."""
+
+    def __init__(self, min_cutoff=1.0, beta=0.3, d_cutoff=1.0, fps=30.0):
+        self.min_cutoff, self.beta, self.d_cutoff, self.fps = min_cutoff, beta, d_cutoff, float(fps)
+        self.x_prev = None
+        self.dx_prev = None
+
+    def reset(self):
+        self.x_prev = self.dx_prev = None
+
+    def _alpha(self, cutoff):
+        tau = 1.0 / (2.0 * np.pi * cutoff)
+        dt = 1.0 / self.fps
+        return 1.0 / (1.0 + tau / dt)
+
+    def __call__(self, x):
+        x = np.asarray(x, np.float64)
+        if self.x_prev is None:
+            self.x_prev, self.dx_prev = x, np.zeros_like(x)
+            return x
+        dx = (x - self.x_prev) * self.fps
+        a_d = self._alpha(self.d_cutoff)
+        self.dx_prev = a_d * dx + (1.0 - a_d) * self.dx_prev
+        a = self._alpha(self.min_cutoff + self.beta * np.abs(self.dx_prev))   # per-channel
+        self.x_prev = a * x + (1.0 - a) * self.x_prev
+        return self.x_prev
+
 
 class DiffusionStreamer:
     """Online hand->body generator. push() one frame, or push_block() a block of frames."""
 
     def __init__(self, model, diffusion, window: int = 16, block: int = 4,
-                 sample_steps: int = 2, device="cpu"):
+                 sample_steps: int = 2, device="cpu", smooth_legs: bool = True,
+                 leg_min_cutoff: float = 0.6, leg_beta: float = 0.1, fps: float = 30.0):
         self.model = model
         self.diff = diffusion
         self.window = window
@@ -59,9 +98,19 @@ class DiffusionStreamer:
         self.sample_steps = sample_steps
         self.device = device
         self._hand = deque(maxlen=window)
+        # causal leg-only smoother (kills G1 leg shake; wrist untouched). None disables.
+        self._leg = OneEuroFilter(leg_min_cutoff, leg_beta, fps=fps) if smooth_legs else None
 
     def reset(self):
         self._hand.clear()
+        if self._leg is not None:
+            self._leg.reset()
+
+    def _smooth(self, frame):
+        """Causally smooth the leg-joint channels of one emitted (135,) frame, in place."""
+        if self._leg is not None:
+            frame[_LEG_COLS] = self._leg(frame[_LEG_COLS])
+        return frame
 
     def _sample_window(self):
         """DDIM-sample the buffered window -> (L,135) world body for the whole window."""
@@ -87,7 +136,10 @@ class DiffusionStreamer:
             return None
         body = self._sample_window()
         k = min(hb.shape[0], body.shape[0])
-        return body[-k:].copy()                                # (k, 135)
+        out = body[-k:].copy()                                 # (k, 135)
+        for i in range(k):                                     # smooth legs in temporal order
+            self._smooth(out[i])
+        return out
 
     def push(self, hand12_world):
         """Single-frame online step: append one 12D frame, re-sample, emit the latest body
@@ -95,4 +147,4 @@ class DiffusionStreamer:
         self._hand.append(np.asarray(hand12_world, np.float32))
         if len(self._hand) < 2:
             return None
-        return self._sample_window()[-1].copy()
+        return self._smooth(self._sample_window()[-1].copy())
