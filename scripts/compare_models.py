@@ -35,6 +35,7 @@ def main():
 
     specs = [
         ("diffusion_full", "checkpoints/diffusion_full.pt", "diffusion"),
+        ("diffusion_footloss", "checkpoints/diffusion_footloss.pt", "diffusion"),
         ("regressor_full", "checkpoints/regressor_full.pt", "regressor"),
         ("diffusion_active", "checkpoints/diffusion_active.pt", "diffusion"),
     ]
@@ -52,14 +53,15 @@ def main():
         m = evaluate(model, val, length=args.length, device=device, arch=arch,
                      diffusion=diff, rest_joints=rest, sample_steps=8, max_windows=args.max_windows)
         rows.append((name, m))
-        print(f"{name:18s}  mpjpe={m['val_mpjpe_mm']:6.1f}mm  wrist={m['val_wrist_pos_mm']:6.1f}mm "
-              f" {m['val_wrist_deg']:.2f}deg  jitter={m['val_jitter']:.2f}  (n={m['val_windows']})")
+        print(f"{name:20s}  mpjpe={m['val_mpjpe_mm']:6.1f}mm  wrist={m['val_wrist_pos_mm']:6.1f}mm "
+              f" {m['val_wrist_deg']:.2f}deg  jitter={m['val_jitter']:.2f}  "
+              f"footskate={m['val_footskate_mm_s']:6.1f}mm/s  (n={m['val_windows']})")
 
-    print("\n| model | MPJPE (mm) | wrist pos (mm) | wrist orient | jitter |")
-    print("|---|---|---|---|---|")
+    print("\n| model | MPJPE (mm) | wrist pos (mm) | wrist orient | jitter | foot-skate (mm/s) |")
+    print("|---|---|---|---|---|---|")
     for name, m in rows:
         print(f"| {name} | {m['val_mpjpe_mm']:.1f} | {m['val_wrist_pos_mm']:.1f} | "
-              f"{m['val_wrist_deg']:.2f}° | {m['val_jitter']:.2f} |")
+              f"{m['val_wrist_deg']:.2f}° | {m['val_jitter']:.2f} | {m['val_footskate_mm_s']:.1f} |")
 
 
 if __name__ == "__main__":
