@@ -131,6 +131,16 @@ def main():
                 setattr(r, _a, args.fps)
             except Exception:
                 pass
+    # aitviewer's save_video never overwrites — it appends _0/_1/... So a re-render leaves the
+    # OLD _0 in place and writes _1, and anything globbing _0 silently picks up the stale clip.
+    # Delete prior outputs for this base so the fresh render is always <base>_0.mp4.
+    import glob
+    import os as _os
+    for _f in glob.glob(_os.path.splitext(args.out)[0] + "_*.mp4"):
+        try:
+            _os.remove(_f)
+        except OSError:
+            pass
     r.save_video(video_dir=args.out, output_fps=args.fps)
     print(f"wrote {args.out} ({len(poses)} frames, {len(poses)/args.fps:.1f}s)")
 

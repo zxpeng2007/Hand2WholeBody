@@ -92,7 +92,7 @@ def _rolling_trail(pos, window):
 
 
 def wrist_overlays(gt_pos=None, gt_R=None, gen_pos=None, gen_R=None, n=None,
-                   axis_len=0.09, sphere_r=0.028, trail_w=0.005, trail_window=22):
+                   axis_len=0.20, sphere_r=0.030, trail_w=0.005, trail_window=22):
     """Renderables for the GT and generated wrist: a colored sphere + an xyz orientation gizmo
     (x=red,y=green,z=blue arrows) per frame, plus a rolling motion-trail (last `trail_window` frames).
       GT  wrist -> red sphere,  orange trail.   generated wrist -> cyan sphere, blue trail.
@@ -111,7 +111,8 @@ def wrist_overlays(gt_pos=None, gt_R=None, gen_pos=None, gen_R=None, n=None,
         if R is not None:
             oriv = np.einsum("ij,tjk->tik", _R_ZUP, np.asarray(R, np.float32)[:n])
             out.append(RigidBodies(posv[:, None], oriv[:, None], radius=sphere_r,
-                                   length=axis_len, color=sph_color))
+                                   length=axis_len, radius_cylinder=axis_len / 24,
+                                   color=sph_color))
         else:
             out.append(_wrist_ghost(pos, radius=sphere_r, color=sph_color))   # _wrist_ghost re-applies z_up
 
