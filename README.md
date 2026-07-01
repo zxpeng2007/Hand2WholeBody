@@ -23,6 +23,20 @@ constants come from [`configs/default.yaml`](configs/default.yaml).
 
 <p align="center"><img src="docs/img/training.svg" alt="Hand2Body training and data flow" width="900"></p>
 
+## Pretrained model
+
+Trained weights are published as **[GitHub Release](https://github.com/zxpeng2007/Hand2Body/releases)**
+assets (kept out of git history). Fetch the 12D wrist → whole-body diffusion model:
+
+```bash
+gh release download v0.1.0 -p diffusion_full.pt -D checkpoints    # -> checkpoints/diffusion_full.pt
+# or download it from the Releases page into checkpoints/
+```
+
+`diffusion_full.pt` — `DiTDenoiser(hidden=256, n_layers=4, hand_dim=12)`. Held-out on 775 unseen
+table-tennis sequences: **20.7 mm MPJPE**, 8.5 mm wrist pos, 0.72° wrist orient. Load/usage in the
+[release notes](https://github.com/zxpeng2007/Hand2Body/releases/tag/v0.1.0).
+
 ## Quickstart
 
 The 6D convention is Zhou-2019 columns (`frames.PROJECT_R6D`); the models map
