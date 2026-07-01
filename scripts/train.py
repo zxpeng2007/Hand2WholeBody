@@ -37,6 +37,9 @@ def main():
     ap.add_argument("--top-activity-frac", type=float, default=0.0,
                     help="keep only the most wrist-active fraction (0=off); proxy for striking motions")
     ap.add_argument("--pkl", default="", help="upstream train.pkl (SMPL) — FK-extracts the 12D/24D")
+    ap.add_argument("--arctic", default="", help="ARCTIC raw_seqs dir (SMPL-X) -> bimanual clips")
+    ap.add_argument("--smplx-models", default="",
+                    help="dir with smplx/SMPLX_*.{npz,pkl} for ARCTIC FK (e.g. assets/models)")
     ap.add_argument("--wrist-count", type=int, default=0,
                     help="1 (left paddle) or 2 (bimanual); 0 = use config hand_signal.wrist_count")
     ap.add_argument("--pairs", default="", help="dir of pre-extracted pair_*.npz")
@@ -73,6 +76,13 @@ def main():
         clips, rest_joints = load_clips(args.pkl, fps=cfg["frame"]["fps"],
                                         limit=(args.limit or None), wrists=wrists)
         print(f"loaded {len(clips)} sequences from {args.pkl}; "
+              f"rest_joints {'calibrated' if rest_joints is not None else 'approx'}")
+    elif args.arctic:
+        from h2b.data.arctic_loader import load_arctic_clips
+        clips, rest_joints = load_arctic_clips(args.arctic, model_dir=args.smplx_models,
+                                               fps=cfg["frame"]["fps"], wrists=wrists,
+                                               limit=(args.limit or None))
+        print(f"loaded {len(clips)} ARCTIC (SMPL-X) sequences; wrists={wrists}; "
               f"rest_joints {'calibrated' if rest_joints is not None else 'approx'}")
     elif args.pairs:
         clips = load_pairs(args.pairs)
