@@ -12,6 +12,7 @@ from h2b.data import arctic_loader as AL
 from h2b.data import smpl_fk as SF
 from h2b.data.pkl_loader import calibrate_rest_joints
 from h2b import losses as L
+from h2b import training as TR
 
 
 def _synthetic_arctic(T=20, seed=0):
@@ -56,9 +57,35 @@ def test_arctic_left_only_is_12d():
 
 def test_load_arctic_clips_from_files(tmp_path):
     for i in range(2):
-        np.save(str(tmp_path / f"s{i}_use.smplx"), _synthetic_arctic(30, i), allow_pickle=True)
+        sd = tmp_path / f"s0{i}"; sd.mkdir()
+        np.save(str(sd / "box_use_01.smplx"), _synthetic_arctic(30, i), allow_pickle=True)
     clips, rest = AL.load_arctic_clips(str(tmp_path), joints_fn=SF.synthetic_joints_fn,
                                        wrists=F.WRIST_JOINTS)
     assert len(clips) == 2
     assert clips[0][0].shape[1] == 24 and clips[0][1].shape[1] == 135
     assert rest is not None and rest.shape == (22, 3)
+
+
+def test_subject_id_and_meta(tmp_path):
+    import json
+    assert AL.subject_id_from_path("x/raw_seqs/s03/box_use_01.smplx.npy") == "s03"
+    meta = tmp_path / "meta"; meta.mkdir()
+    (meta / "misc.json").write_text(json.dumps({"s01": {"gender": "male"}, "s02": {"gender": "female"}}))
+    m = AL.load_arctic_meta(str(meta))
+    assert m["genders"] == {"s01": "male", "s02": "female"}
+    assert AL.load_arctic_meta(str(tmp_path / "nope")) is None
+
+
+def test_load_vtemplate(tmp_path):
+    vt = tmp_path / "subject_vtemplates"; vt.mkdir()
+    (vt / "s01.obj").write_text("v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n")
+    v = AL._load_vtemplate(str(vt), "s01")
+    assert v.shape == (3, 3)
+    assert AL._load_vtemplate(str(vt), "s99") is None
+
+
+def test_planted_feet_fraction():
+    _, body = TR.synthetic_clips(n_clips=1, T=30, seed=3)[0]
+    assert 0.0 <= AL.planted_feet_fraction(body) <= 1.0
+    static = np.repeat(body[:1], 20, axis=0)                   # frozen pose -> feet planted
+    assert AL.planted_feet_fraction(static) > 0.9
